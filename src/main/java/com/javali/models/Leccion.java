@@ -3,11 +3,28 @@
 //y su orden dentro de la unidad.
 package com.javali.models;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "lecciones") //crea tabla lecciones
+
 public class Leccion {
+
+    @Id 
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @ManyToOne (optional = false) //ManyToOne: muchas lecciones pertenecen a una unidad
+    @JoinColumn (name = "unidad_id")//JoinColumn: le pone nombre a esa columna de la clave foránea
     private Long unidadId; //indica a qué unidad pertenece . Vinculo con clase Unidad
+
+    @Column(nullable = false)
     private String titulo;
+
+    @Column(length = 4000)
     private String explicacion;
+
+    @Column(nullable = false)
     private int orden;
 
     public Leccion() {} //constructor vacio

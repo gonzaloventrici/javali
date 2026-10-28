@@ -2,10 +2,24 @@
 //Cada unidad tiene un título, una descripción y un orden para saber en qué posición aparece.
 package com.javali.models; 
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "unidades") //le dicen a Hibernate que la clase es una tabla.
+
 public class Unidad {
+    
+    @Id //clave primaria
+    @GeneratedValue(strategy = GenerationType.IDENTITY) //la base lo genera sola
     private Long id;
+
+    @Column(nullable = false) //columna que NO PUEDE SER NULA
     private String titulo;
+
+    @Column(length = 500)
     private String descripcion;
+
+    @Column(nullable = false)
     private int orden;
 
     public Unidad() {} //constructor vacio OBLIGATORIO springboot
