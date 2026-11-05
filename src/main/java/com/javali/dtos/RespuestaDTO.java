@@ -1,6 +1,10 @@
-// Lo que envía el estudiante: un indice (opciones o error) o una lista orden (ordenar)
 package com.javali.dtos;
 
-import java.util.List;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 
-public record RespuestaDTO(Integer indice, List<Integer> orden) {}
+public record RespuestaDTO(
+        @NotNull
+        @Min(0)
+        Integer indiceSeleccionado) {}
+// Recibe el índice de la opción elegida por el estudiante.
