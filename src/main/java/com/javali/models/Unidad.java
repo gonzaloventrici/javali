@@ -22,7 +22,7 @@ public class Unidad {
     @Column(nullable = false)
     private int orden;
 
-    public Unidad() {} //constructor vacio OBLIGATORIO springboot
+    public Unidad() {} //constructor vacio OBLIGATORIO hibernate
 
     public Unidad(Long id, String titulo, String descripcion, int orden) {
         this.id = id;
