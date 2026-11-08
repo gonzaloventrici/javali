@@ -38,10 +38,11 @@ public class EjercicioServiceImpl implements EjercicioService {
             throw new LeccionNoEncontradaException(leccionId);
         }
         return ejercicioRepository
-                .findByLeccionIdOrderByOrdenAsc(leccionId)
-                .stream()
-                .map(this::aRespuesta)
-                .toList();
+        .findByLeccion_IdOrderByOrdenAsc(leccionId)
+        .stream()
+        .map(this::aRespuesta)
+        .toList();
+        // Obtiene los ejercicios de la lección y los convierte en DTO.
     }
     // Verifica la lección y devuelve sus ejercicios ordenados.
 
@@ -111,7 +112,7 @@ public class EjercicioServiceImpl implements EjercicioService {
                 ejercicio.getExplicacion(),
                 ejercicio.getPista(),
                 ejercicio.getOrden(),
-                ejercicio.getOpciones()
+                List.copyOf(ejercicio.getOpciones())
         );
     }
     // Convierte la entidad Ejercicio en un DTO sin la respuesta correcta.

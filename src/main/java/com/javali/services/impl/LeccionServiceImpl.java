@@ -39,10 +39,11 @@ public class LeccionServiceImpl implements LeccionService {
         }
 
         return leccionRepository
-                .findByUnidadIdOrderByOrdenAsc(unidadId)
-                .stream()
-                .map(this::aRespuesta)
-                .toList();
+        .findByUnidad_IdOrderByOrdenAsc(unidadId)
+        .stream()
+        .map(this::aRespuesta)
+        .toList();
+        // Obtiene las lecciones de la unidad y las convierte en DTO.
     }
 
     // Verifica la unidad y devuelve sus lecciones ordenadas.

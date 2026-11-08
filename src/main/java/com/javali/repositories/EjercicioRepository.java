@@ -5,8 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface EjercicioRepository
-        extends JpaRepository<Ejercicio, Long> {
-    List<Ejercicio> findByLeccionIdOrderByOrdenAsc(Long leccionId);
+public interface EjercicioRepository extends JpaRepository<Ejercicio, Long> {
+    List<Ejercicio> findByLeccion_IdOrderByOrdenAsc(Long leccionId);
 }
-// Busca los ejercicios de una lección y los ordena por orden.
+// Busca ejercicios usando el id de la lección relacionada.
