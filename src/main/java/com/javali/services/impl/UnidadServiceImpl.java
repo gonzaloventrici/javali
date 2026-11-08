@@ -51,9 +51,11 @@ public class UnidadServiceImpl implements UnidadService {
     public UnidadResponse crear(UnidadRequest request) {
         Unidad unidad = new Unidad();
         unidad.setTitulo(request.titulo());
+        unidad.setDescripcion(request.description());
         unidad.setOrden(request.orden());
         return aRespuesta(unidadRepository.save(unidad));
     }
+    // Crea una unidad y guarda título, descripción y orden.
 
     private UnidadResponse aRespuesta(Unidad unidad) {
         return new UnidadResponse(unidad.getId(), unidad.getTitulo(),

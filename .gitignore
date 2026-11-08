@@ -36,3 +36,9 @@ target/
 javali.db
 *.db-journal
 .vscode/
+
+src/main/resources/application-local.properties
+src/main/resources/application-local.properties
+javali.db
+*.db-journal
+target/
