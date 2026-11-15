@@ -3,6 +3,7 @@ package com.javali.controllers;
 import com.javali.dtos.ProgresoResponse;
 import com.javali.services.ProgresoService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,9 +25,12 @@ public class ProgresoController {
 
     // Recibe el servicio mediante inyección por constructor.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)"
+    )
     @GetMapping("/usuarios/{usuarioId}/progresos")
     public ResponseEntity<List<ProgresoResponse>> listarPorUsuario(
-            @PathVariable Long usuarioId) {
+            @PathVariable("usuarioId") Long usuarioId) {
 
         return ResponseEntity.ok(
                 progresoService.listarPorUsuario(usuarioId)
@@ -34,6 +38,8 @@ public class ProgresoController {
     }
     // Devuelve el progreso del usuario en sus lecciones.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)")
     @GetMapping("/usuarios/{usuarioId}/progreso/resumen")
     public ResponseEntity<ResumenProgresoResponse> obtenerResumen(
             @PathVariable Long usuarioId) {
@@ -43,7 +49,9 @@ public class ProgresoController {
         );
     }
     // Devuelve fortalezas, temas pendientes y una recomendación.
-
+    
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)")
     @GetMapping("/usuarios/{usuarioId}/lecciones/{leccionId}/estado")
     public ResponseEntity<EstadoLeccionResponse> obtenerEstadoLeccion(
             @PathVariable Long usuarioId,

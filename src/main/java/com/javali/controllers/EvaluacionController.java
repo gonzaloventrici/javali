@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.util.List;
@@ -32,6 +33,8 @@ public class EvaluacionController {
     }
     // Recibe el servicio mediante inyección por constructor.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)")
     @PostMapping("/usuarios/{usuarioId}/evaluaciones")
     public ResponseEntity<EvaluacionResponse> iniciar(
             @PathVariable Long usuarioId) {
@@ -109,6 +112,8 @@ public class EvaluacionController {
     }
     // Guarda el nivel elegido por el estudiante.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)")
     @GetMapping("/usuarios/{usuarioId}/evaluaciones")
     public ResponseEntity<List<EvaluacionResponse>> listarPorUsuario(
             @PathVariable Long usuarioId) {

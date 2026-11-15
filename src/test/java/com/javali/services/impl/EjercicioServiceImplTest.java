@@ -19,6 +19,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+//-----------------------------------------------
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
+// Permiten ejecutar la misma prueba con distintas categorías.
 
 import java.util.Optional;
 
@@ -199,4 +203,81 @@ class EjercicioServiceImplTest {
 
         return ejercicio;
     } // Crea un ejercicio mínimo reutilizable para las pruebas.
+
+    @ParameterizedTest
+    @EnumSource(
+            value = CategoriaError.class,
+            names = {
+                "COMPILACION",        
+                "LOGICA",
+                "CONCEPTO"
+                }
+        )
+        void corregirRespuestaIncorrectaConservaCategoriaDelError(
+                CategoriaError categoriaError) {
+
+        Long ejercicioId = 1L;
+        Long usuarioId = 1L;
+        Integer indiceSeleccionado = 0;
+
+        Ejercicio ejercicio = crearEjercicio(
+                ejercicioId,
+                1
+        );
+
+        Usuario usuario = new Usuario();
+        usuario.setId(usuarioId);
+
+        RetroalimentacionOpcion retroalimentacion =
+                new RetroalimentacionOpcion();
+
+        retroalimentacion.setEjercicio(ejercicio);
+        retroalimentacion.setIndiceOpcion(indiceSeleccionado);
+        retroalimentacion.setCategoriaError(categoriaError);
+        retroalimentacion.setExplicacion(
+                "Explicación específica del error."
+        );
+        retroalimentacion.setPista("Pista específica para corregirlo.");
+
+        RespuestaDTO respuesta = new RespuestaDTO(
+                usuarioId,
+                indiceSeleccionado
+        );
+
+        when(ejercicioRepository.findById(ejercicioId))
+                .thenReturn(Optional.of(ejercicio));
+        when(usuarioRepository.findById(usuarioId))
+                .thenReturn(Optional.of(usuario));
+        when(retroalimentacionRepository
+                .findByEjercicio_IdAndIndiceOpcion(
+                        ejercicioId,
+                        indiceSeleccionado
+                ))
+                .thenReturn(Optional.of(retroalimentacion));
+
+        ResultadoCorreccionDTO resultado =
+                ejercicioService.corregir(
+                        ejercicioId,
+                        respuesta
+                );
+        assertFalse(resultado.correcta());
+        assertEquals(categoriaError, resultado.categoriaError());
+        assertEquals("Explicación específica del error.", resultado.explicacion());
+        assertEquals("Pista específica para corregirlo.", resultado.pista());
+
+        ArgumentCaptor<Intento> captor =
+                ArgumentCaptor.forClass(Intento.class);
+        verify(intentoRepository).save(captor.capture());
+
+        Intento intentoGuardado = captor.getValue();
+
+        assertFalse(intentoGuardado.isCorrecta());
+        assertEquals(categoriaError, intentoGuardado.getCategoriaError());
+
+        verify(progresoService).actualizar(
+                usuario,
+                ejercicio,
+                false
+        );
+    } // Verifica COMPILACION, LOGICA y CONCEPTO con la misma prueba.
 }

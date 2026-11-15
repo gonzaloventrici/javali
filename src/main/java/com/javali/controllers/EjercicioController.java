@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 import com.javali.dtos.RespuestaDTO;
 import com.javali.dtos.ResultadoCorreccionDTO;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.net.URI;
 import java.util.List;
@@ -61,6 +62,10 @@ public class EjercicioController {
     }
     // Crea un ejercicio y devuelve 201 Created.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder("
+                + "authentication, #respuesta.usuarioId())") 
+    //@PreAuthorize verifica permisos antes de ejecutar un método.
     @PostMapping("/ejercicios/{id}/respuestas")
     public ResponseEntity<ResultadoCorreccionDTO> corregir(
             @PathVariable Long id,

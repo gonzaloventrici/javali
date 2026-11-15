@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
 
 import java.util.List;
 
@@ -22,6 +23,8 @@ public class IntentoController {
 
     // Recibe el servicio mediante inyección por constructor.
 
+    @PreAuthorize(
+        "@autorizacionUsuarioService.puedeAcceder(authentication, #usuarioId)")
     @GetMapping("/usuarios/{usuarioId}/intentos")
     public ResponseEntity<List<IntentoResponse>> listarPorUsuario(
             @PathVariable Long usuarioId) {
