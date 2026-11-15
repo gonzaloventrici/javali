@@ -10,13 +10,9 @@ import java.util.List;
 public interface EjercicioService {
     List<EjercicioResponse> listarPorLeccion(Long leccionId);
     EjercicioResponse obtener(Long id);
-    EjercicioResponse crear(
-            Long leccionId,
-            EjercicioRequest request
-    );
-    ResultadoCorreccionDTO corregir(
-            Long id,
-            RespuestaDTO respuesta
-    );
+    EjercicioResponse crear(Long leccionId, EjercicioRequest request);
+    ResultadoCorreccionDTO corregir(Long id, RespuestaDTO respuesta);
+    EjercicioResponse modificar(Long id, EjercicioRequest request);
+    void eliminar(Long id);
 }
 // Define las operaciones disponibles para trabajar con ejercicios.

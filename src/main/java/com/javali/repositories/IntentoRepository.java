@@ -18,5 +18,8 @@ public interface IntentoRepository extends JpaRepository<Intento, Long> {
 
     List<Intento> findByUsuario_Id(Long usuarioId);
     // Devuelve todos los intentos necesarios para calcular el resumen.
+
+    boolean existsByEjercicio_Id(Long ejercicioId);
+    // Indica si existen intentos registrados para el ejercicio.
 }
 // Permite guardar intentos y consultar el historial de un usuario.

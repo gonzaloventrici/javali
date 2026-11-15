@@ -15,5 +15,8 @@ public interface RetroalimentacionOpcionRepository
                     Long ejercicioId,
                     Integer indiceOpcion
             );
+
+    boolean existsByEjercicio_Id(Long ejercicioId);
+    // Indica si el ejercicio tiene retroalimentaciones asociadas.
 }
 // Busca una retroalimentación por ejercicio e índice de opción.

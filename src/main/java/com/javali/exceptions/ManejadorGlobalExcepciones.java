@@ -140,4 +140,17 @@ public class ManejadorGlobalExcepciones {
         return problema;
         }
         // Devuelve 409 cuando una relación impide eliminar el recurso.
+
+        @ExceptionHandler(IllegalArgumentException.class)
+        public ProblemDetail manejarArgumentoInvalido(
+                IllegalArgumentException exception) {
+        ProblemDetail problema =
+                ProblemDetail.forStatusAndDetail(
+                        HttpStatus.BAD_REQUEST,
+                        exception.getMessage()
+                );
+        problema.setTitle("Datos funcionales inválidos");
+        return problema;
+        }
+        // Devuelve 400 cuando los datos no respetan una regla funcional.
 }

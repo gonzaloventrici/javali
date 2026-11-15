@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.javali.dtos.RespuestaDTO;
 import com.javali.dtos.ResultadoCorreccionDTO;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.net.URI;
 import java.util.List;
@@ -75,4 +77,22 @@ public class EjercicioController {
         );
     }
     // Recibe una respuesta, la corrige y devuelve el resultado.
+
+    @PutMapping("/ejercicios/{id}")
+    public ResponseEntity<EjercicioResponse> modificar(
+                @PathVariable("id") Long id,
+                @Valid @RequestBody EjercicioRequest request) {
+        return ResponseEntity.ok(
+                ejercicioService.modificar(id, request)
+        );
+        }
+        // Modifica un ejercicio y devuelve 200 OK.
+
+    @DeleteMapping("/ejercicios/{id}")
+    public ResponseEntity<Void> eliminar(
+                @PathVariable("id") Long id) {
+        ejercicioService.eliminar(id);
+        return ResponseEntity.noContent().build();
+        }
+        // Elimina un ejercicio sin dependencias y devuelve 204.
 }
