@@ -6,7 +6,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface UnidadRepository extends JpaRepository<Unidad, Long> {
-    List<Unidad> findAllByOrderByOrdenAsc();    
+    List<Unidad> findAllByOrderByOrdenAsc();
+    //Permite listar todas las unidades
+    List<Unidad> findByCurso_IdOrderByOrdenAsc(Long cursoId);
+    //Permite listar solamente las unidades de un curso
     }
 
 // JpaRepository<Unidad, Long> incluye gratis save, findById, findAll, deleteById 

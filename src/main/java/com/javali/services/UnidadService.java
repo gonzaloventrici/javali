@@ -1,15 +1,21 @@
 package com.javali.services;
 
-import java.util.List;
-
 import com.javali.dtos.UnidadRequest;
 import com.javali.dtos.UnidadResponse;
 
+import java.util.List;
+
 public interface UnidadService {
-    List<UnidadResponse>listar();
+
+    List<UnidadResponse> listar();
+    List<UnidadResponse> listarPorCurso(Long cursoId);
     UnidadResponse obtener(Long id);
-    UnidadResponse crear(UnidadRequest request);
+    UnidadResponse crear(
+            Long cursoId,
+            UnidadRequest request
+    );
 }
+
 
 //Define el contrato del servicio de unidades.
 //Declara las operaciones disponibles para trabajar con unidades.

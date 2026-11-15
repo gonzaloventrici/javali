@@ -13,6 +13,10 @@ public class Unidad {
     @GeneratedValue(strategy = GenerationType.IDENTITY) //la base lo genera sola
     private Long id;
 
+    @ManyToOne
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso; //Indica a que curso pertenece esta unidad
+
     @Column(nullable = false) //columna que NO PUEDE SER NULA
     private String titulo;
 
@@ -33,6 +37,8 @@ public class Unidad {
 
     public Long getId() { return id; } //trae id
     public void setId(Long id) { this.id = id; } //setea id
+    public Curso getCurso() {return curso;}
+    public void setCurso(Curso curso){this.curso = curso;}
     public String getTitulo() { return titulo; } //trae el titulo
     public void setTitulo(String titulo) { this.titulo = titulo; } //setea el titulo
     public String getDescripcion() { return descripcion; } //trae la descripcion

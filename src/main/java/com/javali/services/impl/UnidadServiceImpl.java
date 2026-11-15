@@ -20,15 +20,23 @@ import com.javali.repositories.UnidadRepository;
 import com.javali.services.UnidadService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.javali.exceptions.CursoNoEncontradoException;
+import com.javali.models.Curso;
+import com.javali.repositories.CursoRepository;
+
 import java.util.List;
 
 @Service 
 public class UnidadServiceImpl implements UnidadService {
     private final UnidadRepository unidadRepository;
+    private final CursoRepository cursoRepository;
 
-    public UnidadServiceImpl(UnidadRepository unidadRepository) {
+    public UnidadServiceImpl(
+        UnidadRepository unidadRepository,
+        CursoRepository cursoRepository) {
         this.unidadRepository = unidadRepository;
-    }
+        this.cursoRepository = cursoRepository;
+        }
 
     @Override
     @Transactional(readOnly = true) //define la transacción en el service, no en el repositorio.
@@ -40,6 +48,21 @@ public class UnidadServiceImpl implements UnidadService {
 
     @Override
     @Transactional(readOnly = true)
+    public List<UnidadResponse> listarPorCurso(Long cursoId) {
+
+        if (!cursoRepository.existsById(cursoId)) {
+            throw new CursoNoEncontradoException(cursoId);
+        }
+        return unidadRepository
+                .findByCurso_IdOrderByOrdenAsc(cursoId)
+                .stream()
+                .map(this::aRespuesta)
+                .toList();
+    }
+    // Devuelve las unidades pertenecientes al curso solicitado.
+
+    @Override
+    @Transactional(readOnly = true)
     public UnidadResponse obtener(Long id) {
         Unidad unidad = unidadRepository.findById(id)
                 .orElseThrow(() -> new UnidadNoEncontradaException(id));
@@ -48,17 +71,36 @@ public class UnidadServiceImpl implements UnidadService {
 
     @Override
     @Transactional
-    public UnidadResponse crear(UnidadRequest request) {
+    public UnidadResponse crear(
+            Long cursoId,
+            UnidadRequest request) {
+        Curso curso = cursoRepository.findById(cursoId)
+                .orElseThrow(
+                        () -> new CursoNoEncontradoException(cursoId)
+                );
         Unidad unidad = new Unidad();
+
+        unidad.setCurso(curso);
         unidad.setTitulo(request.titulo());
         unidad.setDescripcion(request.description());
         unidad.setOrden(request.orden());
+
         return aRespuesta(unidadRepository.save(unidad));
     }
-    // Crea una unidad y guarda título, descripción y orden.
+    // Crea una unidad y la relaciona con un curso existente.
 
     private UnidadResponse aRespuesta(Unidad unidad) {
-        return new UnidadResponse(unidad.getId(), unidad.getTitulo(),
-                unidad.getDescripcion(), unidad.getOrden());
+        Long cursoId = unidad.getCurso() == null
+                ? null
+                : unidad.getCurso().getId();
+
+        return new UnidadResponse(
+                unidad.getId(),
+                cursoId,
+                unidad.getTitulo(),
+                unidad.getDescripcion(),
+                unidad.getOrden()
+        );
     }
+    // Convierte la unidad en DTO y admite unidades anteriores sin curso.
 }

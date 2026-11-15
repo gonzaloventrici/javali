@@ -73,5 +73,59 @@ public class ManejadorGlobalExcepciones {
 
         return problema;
         }
-// Convierte un email repetido en una respuesta 409.
+        // Convierte un email repetido en una respuesta 409.
+
+    @ExceptionHandler(CursoNoEncontradoException.class)
+    public ProblemDetail manejarCursoNoEncontrado(
+                CursoNoEncontradoException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        problema.setTitle("Curso no encontrado");
+
+        return problema;
+        }
+        // Convierte un curso inexistente en una respuesta 404.
+
+        @ExceptionHandler(EvaluacionNoEncontradaException.class)
+        public ProblemDetail manejarEvaluacionNoEncontrada(
+                EvaluacionNoEncontradaException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+        problema.setTitle("Evaluación no encontrada");
+        return problema;
+        }
+        // Convierte una evaluación inexistente en una respuesta 404.
+
+        @ExceptionHandler(PreguntaNoEncontradaException.class)
+        public ProblemDetail manejarPreguntaNoEncontrada(
+                PreguntaNoEncontradaException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+        problema.setTitle("Pregunta no encontrada");
+        return problema;
+        }
+        // Convierte una pregunta inexistente en una respuesta 404.
+
+        @ExceptionHandler(RespuestaEvaluacionInvalidaException.class)
+        public ProblemDetail manejarRespuestaEvaluacionInvalida(
+                RespuestaEvaluacionInvalidaException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage()
+        );
+        problema.setTitle("Respuesta de evaluación inválida");
+        return problema;
+        }
+        // Convierte una evaluación inválida en una respuesta 400.
 }
