@@ -13,6 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.javali.dtos.RespuestaDTO;
 import com.javali.dtos.ResultadoCorreccionDTO;
+import com.javali.models.RetroalimentacionOpcion;
+import com.javali.repositories.RetroalimentacionOpcionRepository;
+
 
 import java.util.Objects;
 import java.util.List;
@@ -22,13 +25,18 @@ public class EjercicioServiceImpl implements EjercicioService {
 
     private final EjercicioRepository ejercicioRepository;
     private final LeccionRepository leccionRepository;
+    private final RetroalimentacionOpcionRepository retroalimentacionRepository;
 
     public EjercicioServiceImpl(
-            EjercicioRepository ejercicioRepository,
-            LeccionRepository leccionRepository) {
-        this.ejercicioRepository = ejercicioRepository;
-        this.leccionRepository = leccionRepository;
-    }
+        EjercicioRepository ejercicioRepository,
+        LeccionRepository leccionRepository,
+        RetroalimentacionOpcionRepository retroalimentacionRepository) {
+    this.ejercicioRepository = ejercicioRepository;
+    this.leccionRepository = leccionRepository;
+    this.retroalimentacionRepository = retroalimentacionRepository;
+}
+
+// Recibe los repositorios mediante inyección por constructor.
     // Recibe los repositorios mediante inyección por constructor.
 
     @Override
@@ -83,8 +91,9 @@ public class EjercicioServiceImpl implements EjercicioService {
     @Override
     @Transactional(readOnly = true)
     public ResultadoCorreccionDTO corregir(
-            Long id,
-            RespuestaDTO respuesta) {
+                Long id,
+                RespuestaDTO respuesta) {
+
         Ejercicio ejercicio = ejercicioRepository.findById(id)
                 .orElseThrow(
                         () -> new EjercicioNoEncontradoException(id)
@@ -93,14 +102,38 @@ public class EjercicioServiceImpl implements EjercicioService {
                 ejercicio.getIndiceCorrecto(),
                 respuesta.indiceSeleccionado()
         );
-        String pista = correcta ? null : ejercicio.getPista();
+        if (correcta) {
+                return new ResultadoCorreccionDTO(
+                        true,
+                        null,
+                        ejercicio.getExplicacion(),
+                        null
+                );
+        }
+        RetroalimentacionOpcion retroalimentacion =
+                retroalimentacionRepository
+                        .findByEjercicio_IdAndIndiceOpcion(
+                                id,
+                                respuesta.indiceSeleccionado()
+                        )
+                        .orElse(null);
+        if (retroalimentacion == null) {
+                return new ResultadoCorreccionDTO(
+                        false,
+                        null,
+                        ejercicio.getExplicacion(),
+                        ejercicio.getPista()
+                );
+        }
         return new ResultadoCorreccionDTO(
-                correcta,
-                ejercicio.getExplicacion(),
-                pista
+                false,
+                retroalimentacion.getCategoriaError(),
+                retroalimentacion.getExplicacion(),
+                retroalimentacion.getPista()
         );
-    }
-    // Compara la opción elegida con la correcta y devuelve el resultado.
+}
+        // Corrige la respuesta y devuelve una devolución específica si existe.
+        // Compara la opción elegida con la correcta y devuelve el resultado.
 
     private EjercicioResponse aRespuesta(Ejercicio ejercicio) {
         return new EjercicioResponse(
