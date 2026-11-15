@@ -128,4 +128,16 @@ public class ManejadorGlobalExcepciones {
         return problema;
         }
         // Convierte una evaluación inválida en una respuesta 400.
+
+        @ExceptionHandler(RecursoConDependenciasException.class)
+        public ProblemDetail manejarRecursoConDependencias(
+                RecursoConDependenciasException exception) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+        problema.setTitle("El recurso contiene datos relacionados");
+        return problema;
+        }
+        // Devuelve 409 cuando una relación impide eliminar el recurso.
 }

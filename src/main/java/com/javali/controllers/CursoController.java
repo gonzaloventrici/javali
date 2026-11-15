@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.net.URI;
 import java.util.List;
@@ -56,4 +58,22 @@ public class CursoController {
                 .body(cursoCreado);
     }
     // Crea un curso y devuelve 201 Created.
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CursoResponse> modificar(
+            @PathVariable Long id,
+            @Valid @RequestBody CursoRequest request) {
+        return ResponseEntity.ok(
+                cursoService.modificar(id, request)
+        );
+    }
+    // Modifica un curso y devuelve 200 OK.
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable Long id) {
+        cursoService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+    // Elimina un curso y devuelve 204 No Content.
 }

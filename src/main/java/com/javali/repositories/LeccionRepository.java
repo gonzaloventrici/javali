@@ -14,5 +14,8 @@ public interface LeccionRepository extends JpaRepository<Leccion, Long> {
         Long unidadId,
         int orden
     ); // Busca la lección anterior dentro de la misma unidad.
+
+    boolean existsByUnidad_Id(Long unidadId);
+// Comprueba si una unidad contiene lecciones.
 }
 // Busca lecciones usando el id de la unidad relacionada.

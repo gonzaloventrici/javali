@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import java.net.URI;
 import java.util.List;
@@ -71,6 +73,24 @@ public class UnidadController {
                 .created(ubicacion)
                 .body(unidadCreada);
     }
-
     // Crea una unidad dentro del curso indicado.
+
+    @PutMapping("/unidades/{id}")
+    public ResponseEntity<UnidadResponse> modificar(
+            @PathVariable("id") Long id,
+            @Valid @RequestBody UnidadRequest request) {
+
+        return ResponseEntity.ok(
+                unidadService.modificar(id, request)
+        );
+    }
+    // Modifica una unidad y devuelve 200 OK.
+
+    @DeleteMapping("/unidades/{id}")
+    public ResponseEntity<Void> eliminar(
+            @PathVariable("id") Long id) {
+        unidadService.eliminar(id);
+        return ResponseEntity.noContent().build();
+    }
+    // Elimina una unidad vacía y devuelve 204 No Content.
 }

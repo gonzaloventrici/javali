@@ -23,6 +23,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.javali.exceptions.CursoNoEncontradoException;
 import com.javali.models.Curso;
 import com.javali.repositories.CursoRepository;
+import com.javali.exceptions.RecursoConDependenciasException;
+import com.javali.repositories.LeccionRepository;
 
 import java.util.List;
 
@@ -30,13 +32,16 @@ import java.util.List;
 public class UnidadServiceImpl implements UnidadService {
     private final UnidadRepository unidadRepository;
     private final CursoRepository cursoRepository;
+    private final LeccionRepository leccionRepository;
 
     public UnidadServiceImpl(
         UnidadRepository unidadRepository,
-        CursoRepository cursoRepository) {
+        CursoRepository cursoRepository,
+        LeccionRepository leccionRepository) {
         this.unidadRepository = unidadRepository;
         this.cursoRepository = cursoRepository;
-        }
+        this.leccionRepository = leccionRepository;
+    }
 
     @Override
     @Transactional(readOnly = true) //define la transacción en el service, no en el repositorio.
@@ -103,4 +108,44 @@ public class UnidadServiceImpl implements UnidadService {
         );
     }
     // Convierte la unidad en DTO y admite unidades anteriores sin curso.
+
+    @Override
+    @Transactional
+    public UnidadResponse modificar(
+            Long id,
+            UnidadRequest request) {
+
+        Unidad unidad = buscarUnidad(id);
+
+        unidad.setTitulo(request.titulo().trim());
+        unidad.setDescripcion(request.description().trim());
+        unidad.setOrden(request.orden());
+
+        Unidad unidadActualizada =
+                unidadRepository.save(unidad);
+
+        return aRespuesta(unidadActualizada);
+    }
+    // Modifica una unidad sin cambiar el curso al que pertenece.
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+        Unidad unidad = buscarUnidad(id);
+        if (leccionRepository.existsByUnidad_Id(id)) {
+            throw new RecursoConDependenciasException(
+                    "No se puede eliminar la unidad porque contiene lecciones"
+            );
+        }
+        unidadRepository.delete(unidad);
+    }
+
+    // Elimina una unidad solamente cuando no contiene lecciones.
+
+    //AUXILIARES
+    private Unidad buscarUnidad(Long id) {
+        return unidadRepository.findById(id)
+                .orElseThrow(() -> new UnidadNoEncontradaException(id));
+    }
+    // Busca una unidad o informa que no existe.
 }

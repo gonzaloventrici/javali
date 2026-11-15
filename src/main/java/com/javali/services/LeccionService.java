@@ -9,5 +9,7 @@ public interface LeccionService {
     List<LeccionResponse> listarPorUnidad(Long unidadId);
     LeccionResponse obtener(Long id);
     LeccionResponse crear(Long unidadId, LeccionRequest request);
+    LeccionResponse modificar(Long id,LeccionRequest request);
+    void eliminar(Long id);
 }
 // Define las operaciones para listar, obtener y crear lecciones.

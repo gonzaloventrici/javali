@@ -8,6 +8,8 @@ import com.javali.repositories.CursoRepository;
 import com.javali.services.CursoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.javali.exceptions.RecursoConDependenciasException;
+import com.javali.repositories.UnidadRepository;
 
 import java.util.List;
 
@@ -15,9 +17,13 @@ import java.util.List;
 public class CursoServiceImpl implements CursoService {
 
     private final CursoRepository cursoRepository;
+    private final UnidadRepository unidadRepository;
 
-    public CursoServiceImpl(CursoRepository cursoRepository) {
+    public CursoServiceImpl(
+        CursoRepository cursoRepository,
+        UnidadRepository unidadRepository) {
         this.cursoRepository = cursoRepository;
+        this.unidadRepository = unidadRepository;
     }
     // Recibe el repositorio mediante inyección por constructor.
 
@@ -60,6 +66,40 @@ public class CursoServiceImpl implements CursoService {
     }
     // Crea un curso con los datos recibidos.
 
+    @Override
+    @Transactional
+    public CursoResponse modificar(
+            Long id,
+            CursoRequest request) {
+
+        Curso curso = buscarCurso(id);
+
+        curso.setTitulo(request.titulo().trim());
+        curso.setDescripcion(request.descripcion().trim());
+        curso.setActivo(request.activo());
+
+        Curso cursoActualizado =
+                cursoRepository.save(curso);
+
+        return aRespuesta(cursoActualizado);
+    }
+    // Modifica los datos de un curso existente.
+
+    @Override
+    @Transactional
+    public void eliminar(Long id) {
+
+        Curso curso = buscarCurso(id);
+
+        if (unidadRepository.existsByCurso_Id(id)) {
+            throw new RecursoConDependenciasException(
+                    "No se puede eliminar el curso porque contiene unidades"
+            );
+        }
+        cursoRepository.delete(curso);
+    }
+    // Elimina un curso solamente si no contiene unidades.
+
     private CursoResponse aRespuesta(Curso curso) {
         return new CursoResponse(
                 curso.getId(),
@@ -69,4 +109,13 @@ public class CursoServiceImpl implements CursoService {
         );
     }
     // Convierte una entidad Curso en un DTO de respuesta.
+
+    //AUXILIARES
+    private Curso buscarCurso(Long id) {
+        return cursoRepository.findById(id)
+                .orElseThrow(
+                        () -> new CursoNoEncontradoException(id)
+                );
+    }
+    // Busca un curso o informa que no existe.
 }

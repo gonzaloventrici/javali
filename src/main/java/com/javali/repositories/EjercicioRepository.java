@@ -7,5 +7,8 @@ import java.util.List;
 
 public interface EjercicioRepository extends JpaRepository<Ejercicio, Long> {
     List<Ejercicio> findByLeccion_IdOrderByOrdenAsc(Long leccionId);
+
+    boolean existsByLeccion_Id(Long leccionId);
+    // Comprueba si una lección contiene ejercicios.
 }
 // Busca ejercicios usando el id de la lección relacionada.

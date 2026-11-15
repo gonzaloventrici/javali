@@ -11,5 +11,7 @@ public interface CursoService {
 
     CursoResponse obtener(Long id);
     CursoResponse crear(CursoRequest request);
+    CursoResponse modificar(Long id,CursoRequest request);
+    void eliminar(Long id);
 }
-// Define las operaciones disponibles para trabajar con cursos.
+// Define el ABML completo de cursos.

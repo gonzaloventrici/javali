@@ -10,6 +10,8 @@ public interface UnidadRepository extends JpaRepository<Unidad, Long> {
     //Permite listar todas las unidades
     List<Unidad> findByCurso_IdOrderByOrdenAsc(Long cursoId);
     //Permite listar solamente las unidades de un curso
+    boolean existsByCurso_Id(Long cursoId);
+    // Comprueba si el curso tiene unidades asociadas.
     }
 
 // JpaRepository<Unidad, Long> incluye gratis save, findById, findAll, deleteById 

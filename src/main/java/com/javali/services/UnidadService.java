@@ -10,10 +10,9 @@ public interface UnidadService {
     List<UnidadResponse> listar();
     List<UnidadResponse> listarPorCurso(Long cursoId);
     UnidadResponse obtener(Long id);
-    UnidadResponse crear(
-            Long cursoId,
-            UnidadRequest request
-    );
+    UnidadResponse crear(Long cursoId, UnidadRequest request);
+    UnidadResponse modificar(Long id, UnidadRequest request);
+    void eliminar(Long id);
 }
 
 

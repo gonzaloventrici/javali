@@ -13,7 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api")
 public class LeccionController {
-
     private final LeccionService leccionService;
 
     public LeccionController(LeccionService leccionService) {
@@ -56,4 +55,22 @@ public class LeccionController {
                 .body(leccionCreada);
     }
     // Valida los datos, crea la lección y devuelve 201 Created.
+
+    @PutMapping("/lecciones/{id}")
+        public ResponseEntity<LeccionResponse> modificar(
+                @PathVariable("id") Long id,
+                @Valid @RequestBody LeccionRequest request) {
+        return ResponseEntity.ok(
+                leccionService.modificar(id, request)
+        );
+        }
+        // Modifica una lección y devuelve 200 OK.
+
+        @DeleteMapping("/lecciones/{id}")
+        public ResponseEntity<Void> eliminar(
+                @PathVariable("id") Long id) {
+        leccionService.eliminar(id);
+        return ResponseEntity.noContent().build();
+        }
+        // Elimina una lección vacía y devuelve 204 No Content.
 }
