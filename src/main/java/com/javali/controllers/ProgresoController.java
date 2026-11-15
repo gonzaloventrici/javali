@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.javali.dtos.ResumenProgresoResponse;
+import com.javali.dtos.EstadoLeccionResponse;
 
 import java.util.List;
 
@@ -31,4 +33,27 @@ public class ProgresoController {
         );
     }
     // Devuelve el progreso del usuario en sus lecciones.
+
+    @GetMapping("/usuarios/{usuarioId}/progreso/resumen")
+    public ResponseEntity<ResumenProgresoResponse> obtenerResumen(
+            @PathVariable Long usuarioId) {
+
+        return ResponseEntity.ok(
+                progresoService.obtenerResumen(usuarioId)
+        );
+    }
+    // Devuelve fortalezas, temas pendientes y una recomendación.
+
+    @GetMapping("/usuarios/{usuarioId}/lecciones/{leccionId}/estado")
+    public ResponseEntity<EstadoLeccionResponse> obtenerEstadoLeccion(
+            @PathVariable Long usuarioId,
+            @PathVariable Long leccionId) {
+        return ResponseEntity.ok(
+                progresoService.obtenerEstadoLeccion(
+                        usuarioId,
+                        leccionId
+                )
+        );
+    }
+    // Devuelve si la lección está desbloqueada y completada.
 }
