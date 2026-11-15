@@ -43,4 +43,35 @@ public class ManejadorGlobalExcepciones {
         return problema;
     }
     // Convierte un ejercicio inexistente en una respuesta 404.
+    
+    @ExceptionHandler(UsuarioNoEncontradoException.class)
+    public ProblemDetail manejarUsuarioNoEncontrado(
+                UsuarioNoEncontradoException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage()
+        );
+
+        problema.setTitle("Usuario no encontrado");
+
+        return problema;
+        }
+
+        // Convierte un usuario inexistente en una respuesta 404.
+
+    @ExceptionHandler(EmailYaRegistradoException.class)
+    public ProblemDetail manejarEmailYaRegistrado(
+                EmailYaRegistradoException exception) {
+
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.CONFLICT,
+                exception.getMessage()
+        );
+
+        problema.setTitle("Email ya registrado");
+
+        return problema;
+        }
+// Convierte un email repetido en una respuesta 409.
 }

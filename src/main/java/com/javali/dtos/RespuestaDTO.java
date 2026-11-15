@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 
 public record RespuestaDTO(
         @NotNull
+        Long usuarioId,
+
+        @NotNull
         @Min(0)
         Integer indiceSeleccionado) {}
-// Recibe el índice de la opción elegida por el estudiante.
+// Recibe el usuario y la opción seleccionada.

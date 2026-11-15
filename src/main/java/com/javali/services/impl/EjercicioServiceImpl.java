@@ -15,6 +15,14 @@ import com.javali.dtos.RespuestaDTO;
 import com.javali.dtos.ResultadoCorreccionDTO;
 import com.javali.models.RetroalimentacionOpcion;
 import com.javali.repositories.RetroalimentacionOpcionRepository;
+import com.javali.exceptions.UsuarioNoEncontradoException;
+import com.javali.models.Intento;
+import com.javali.models.Usuario;
+import com.javali.repositories.IntentoRepository;
+import com.javali.repositories.UsuarioRepository;
+import com.javali.services.ProgresoService;
+
+import java.time.LocalDateTime;
 
 
 import java.util.Objects;
@@ -26,15 +34,29 @@ public class EjercicioServiceImpl implements EjercicioService {
     private final EjercicioRepository ejercicioRepository;
     private final LeccionRepository leccionRepository;
     private final RetroalimentacionOpcionRepository retroalimentacionRepository;
+    private final UsuarioRepository usuarioRepository;
+    private final IntentoRepository intentoRepository;
+    private final ProgresoService progresoService;
+    // Permiten buscar al usuario y guardar su intento.
+
 
     public EjercicioServiceImpl(
         EjercicioRepository ejercicioRepository,
         LeccionRepository leccionRepository,
-        RetroalimentacionOpcionRepository retroalimentacionRepository) {
-    this.ejercicioRepository = ejercicioRepository;
-    this.leccionRepository = leccionRepository;
-    this.retroalimentacionRepository = retroalimentacionRepository;
-}
+        RetroalimentacionOpcionRepository retroalimentacionRepository,
+        UsuarioRepository usuarioRepository,
+        IntentoRepository intentoRepository,
+        ProgresoService progresoService) {
+
+        this.ejercicioRepository = ejercicioRepository;
+        this.leccionRepository = leccionRepository;
+        this.retroalimentacionRepository = retroalimentacionRepository;
+        this.usuarioRepository = usuarioRepository;
+        this.intentoRepository = intentoRepository;
+        this.progresoService = progresoService;
+        }
+
+// Recibe todos los repositorios mediante inyección por constructor.
 
 // Recibe los repositorios mediante inyección por constructor.
     // Recibe los repositorios mediante inyección por constructor.
@@ -89,8 +111,8 @@ public class EjercicioServiceImpl implements EjercicioService {
     // Crea un ejercicio relacionado con una lección existente.
 
     @Override
-    @Transactional(readOnly = true)
-    public ResultadoCorreccionDTO corregir(
+        @Transactional
+        public ResultadoCorreccionDTO corregir(
                 Long id,
                 RespuestaDTO respuesta) {
 
@@ -98,10 +120,54 @@ public class EjercicioServiceImpl implements EjercicioService {
                 .orElseThrow(
                         () -> new EjercicioNoEncontradoException(id)
                 );
+
+        Usuario usuario = usuarioRepository
+                .findById(respuesta.usuarioId())
+                .orElseThrow(
+                        () -> new UsuarioNoEncontradoException(
+                                respuesta.usuarioId()
+                        )
+                );
+
         boolean correcta = Objects.equals(
                 ejercicio.getIndiceCorrecto(),
                 respuesta.indiceSeleccionado()
         );
+
+        RetroalimentacionOpcion retroalimentacion = null;
+
+        if (!correcta) {
+                retroalimentacion = retroalimentacionRepository
+                        .findByEjercicio_IdAndIndiceOpcion(
+                                id,
+                                respuesta.indiceSeleccionado()
+                        )
+                        .orElse(null);
+        }
+
+        Intento intento = new Intento();
+
+        intento.setUsuario(usuario);
+        intento.setEjercicio(ejercicio);
+        intento.setIndiceSeleccionado(
+                respuesta.indiceSeleccionado()
+        );
+        intento.setCorrecta(correcta);
+        intento.setCategoriaError(
+                retroalimentacion == null
+                        ? null
+                        : retroalimentacion.getCategoriaError()
+        );
+        intento.setFecha(LocalDateTime.now());
+
+        intentoRepository.save(intento);
+        
+        progresoService.actualizar(
+        usuario,
+        ejercicio,
+        correcta);
+        // Actualiza el progreso del usuario en la lección.
+
         if (correcta) {
                 return new ResultadoCorreccionDTO(
                         true,
@@ -110,13 +176,7 @@ public class EjercicioServiceImpl implements EjercicioService {
                         null
                 );
         }
-        RetroalimentacionOpcion retroalimentacion =
-                retroalimentacionRepository
-                        .findByEjercicio_IdAndIndiceOpcion(
-                                id,
-                                respuesta.indiceSeleccionado()
-                        )
-                        .orElse(null);
+
         if (retroalimentacion == null) {
                 return new ResultadoCorreccionDTO(
                         false,
@@ -125,13 +185,16 @@ public class EjercicioServiceImpl implements EjercicioService {
                         ejercicio.getPista()
                 );
         }
+
         return new ResultadoCorreccionDTO(
                 false,
                 retroalimentacion.getCategoriaError(),
                 retroalimentacion.getExplicacion(),
                 retroalimentacion.getPista()
         );
-}
+        }
+
+// Corrige la respuesta y registra el intento del usuario.
         // Corrige la respuesta y devuelve una devolución específica si existe.
         // Compara la opción elegida con la correcta y devuelve el resultado.
 
