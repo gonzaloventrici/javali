@@ -27,6 +27,10 @@
         align-items: center;
       }
 
+      nav strong {
+        margin-right: 8px;
+      }
+
       nav a {
         color: white;
         text-decoration: none;
@@ -34,6 +38,30 @@
 
       nav a:hover {
         text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
       }
 
       main {
@@ -49,21 +77,43 @@
         color: #17324d;
       }
 
+      .tipo {
+        color: #5d6875;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
       pre {
         overflow-x: auto;
         padding: 14px;
         background: #eef2f5;
         border-radius: 6px;
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
       }
 
       .opcion {
         margin-bottom: 12px;
         padding: 12px;
         background: #f4f6f8;
+        border: 1px solid transparent;
         border-radius: 7px;
       }
 
-      button {
+      .opcion:hover {
+        border-color: #087e8b;
+      }
+
+      .opcion label {
+        display: block;
+        cursor: pointer;
+      }
+
+      .opcion input {
+        margin-right: 8px;
+      }
+
+      .boton-responder {
         margin-top: 15px;
         padding: 12px 18px;
         border: none;
@@ -74,7 +124,7 @@
         cursor: pointer;
       }
 
-      button:hover {
+      .boton-responder:hover {
         background: #066975;
       }
 
@@ -82,6 +132,10 @@
         margin-top: 28px;
         padding: 20px;
         border-radius: 9px;
+      }
+
+      .resultado h2 {
+        margin-top: 0;
       }
 
       .correcta {
@@ -98,48 +152,44 @@
         display: inline-block;
         margin-bottom: 20px;
         color: #087e8b;
+        text-decoration: none;
+      }
+
+      .volver:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
 
   <body>
-    <header>
-      <nav>
-        <strong>Javali</strong>
-
-        <a th:href="@{/}"> Inicio </a>
-
-        <a th:href="@{/web/cursos}"> Cursos </a>
-
-        <form th:action="@{/logout}" method="post">
-          <button type="submit">Cerrar sesión</button>
-        </form>
-      </nav>
-    </header>
+    <div th:replace="~{fragments/menu :: menu}"></div>
 
     <main>
       <a
         class="volver"
-        th:href="@{/web/lecciones/{id}/ejercicios(id=${ejercicio.leccionId})}"
+        th:href="@{/web/lecciones/{id}/ejercicios(
+            id=${ejercicio.leccionId}
+       )}"
       >
         Volver a ejercicios
       </a>
 
-      <p th:text="${ejercicio.tipo}">OPCIONES</p>
+      <p class="tipo" th:text="${ejercicio.tipo}">OPCIONES</p>
 
       <h1 th:text="${ejercicio.enunciado}">Enunciado del ejercicio</h1>
 
       <pre
         th:if="${ejercicio.codigo != null
-                 and !ejercicio.codigo.isBlank()}"
+            and !ejercicio.codigo.isBlank()}"
         th:text="${ejercicio.codigo}"
       >
-        Código del ejercicio
-    </pre
+Código del ejercicio</pre
       >
 
       <form
-        th:action="@{/web/ejercicios/{id}/respuesta(id=${ejercicio.id})}"
+        th:action="@{/web/ejercicios/{id}/respuesta(
+                id=${ejercicio.id}
+          )}"
         method="post"
       >
         <div class="opcion" th:each="opcion, estado : ${ejercicio.opciones}">
@@ -149,7 +199,7 @@
               name="indiceSeleccionado"
               th:value="${estado.index}"
               th:checked="${indiceSeleccionado != null
-                                   and indiceSeleccionado == estado.index}"
+                               and indiceSeleccionado == estado.index}"
               required
             />
 
@@ -157,12 +207,13 @@
           </label>
         </div>
 
-        <button type="submit">Enviar respuesta</button>
+        <button class="boton-responder" type="submit">Enviar respuesta</button>
       </form>
 
       <section
         class="resultado correcta"
-        th:if="${resultado != null and resultado.correcta}"
+        th:if="${resultado != null
+                     and resultado.correcta}"
       >
         <h2>Respuesta correcta</h2>
 
@@ -171,7 +222,8 @@
 
       <section
         class="resultado incorrecta"
-        th:if="${resultado != null and !resultado.correcta}"
+        th:if="${resultado != null
+                     and !resultado.correcta}"
       >
         <h2>Respuesta incorrecta</h2>
 
@@ -185,7 +237,10 @@
           Explicación específica del error.
         </p>
 
-        <p th:if="${resultado.pista != null}">
+        <p
+          th:if="${resultado.pista != null
+                and !resultado.pista.isBlank()}"
+        >
           Pista:
 
           <strong th:text="${resultado.pista}">

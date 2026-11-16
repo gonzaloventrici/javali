@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Evaluación inicial | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      main {
+        max-width: 850px;
+        margin: 40px auto;
+        padding: 24px;
+      }
+
+      h1,
+      h2 {
+        color: #17324d;
+      }
+
+      .introduccion,
+      .pregunta {
+        margin-bottom: 20px;
+        padding: 22px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      .pregunta {
+        border-left: 6px solid #7048a8;
+      }
+
+      .pregunta h2 {
+        margin-top: 0;
+      }
+
+      pre {
+        overflow-x: auto;
+        padding: 14px;
+        background: #eef2f5;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
+      }
+
+      .opcion {
+        margin: 8px 0;
+        padding: 10px;
+        background: #f4f6f8;
+        border-radius: 6px;
+      }
+
+      .opcion label {
+        display: block;
+        cursor: pointer;
+      }
+
+      .boton-finalizar {
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .boton-finalizar:hover {
+        background: #066975;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <section class="introduccion">
+        <h1>Evaluación inicial</h1>
+
+        <p>
+          Respondé las cinco preguntas para obtener una recomendación de nivel.
+        </p>
+
+        <p>Después podrás aceptar el nivel recomendado o seleccionar otro.</p>
+      </section>
+
+      <form
+        th:action="@{/web/evaluaciones/{id}/finalizar(
+                id=${evaluacion.id}
+          )}"
+        method="post"
+      >
+        <section class="pregunta" th:each="pregunta : ${preguntas}">
+          <h2
+            th:text="${pregunta.orden
+                    + '. '
+                    + pregunta.enunciado}"
+          >
+            Pregunta
+          </h2>
+
+          <pre
+            th:if="${pregunta.codigo != null
+                    and !pregunta.codigo.isBlank()}"
+            th:text="${pregunta.codigo}"
+          >
+Código</pre
+          >
+
+          <div class="opcion" th:each="opcion, estado : ${pregunta.opciones}">
+            <label>
+              <input
+                type="radio"
+                th:name="${'respuesta_' + pregunta.id}"
+                th:value="${estado.index}"
+                required
+              />
+
+              <span th:text="${opcion}"> Opción </span>
+            </label>
+          </div>
+        </section>
+
+        <button class="boton-finalizar" type="submit">
+          Finalizar evaluación
+        </button>
+      </form>
+    </main>
+  </body>
+</html>

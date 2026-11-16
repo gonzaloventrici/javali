@@ -27,6 +27,10 @@
         align-items: center;
       }
 
+      nav strong {
+        margin-right: 8px;
+      }
+
       nav a {
         color: white;
         text-decoration: none;
@@ -36,13 +40,37 @@
         text-decoration: underline;
       }
 
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
+      }
+
       main {
         max-width: 900px;
         margin: 40px auto;
         padding: 24px;
       }
 
-      h1 {
+      h1,
+      h2 {
         color: #17324d;
       }
 
@@ -53,6 +81,11 @@
         border-left: 6px solid #087e8b;
         border-radius: 10px;
         box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      .leccion h3 {
+        margin-top: 0;
+        color: #17324d;
       }
 
       .boton {
@@ -66,35 +99,31 @@
 
       .boton:hover {
         background: #066975;
+        text-decoration: none;
       }
 
       .volver {
         display: inline-block;
         margin-bottom: 20px;
         color: #087e8b;
+        text-decoration: none;
+      }
+
+      .volver:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
 
   <body>
-    <header>
-      <nav>
-        <strong>Javali</strong>
-
-        <a th:href="@{/}"> Inicio </a>
-
-        <a th:href="@{/web/cursos}"> Cursos </a>
-
-        <a th:href="@{/login}"> Iniciar sesión </a>
-
-        <a th:href="@{/registro}"> Registrarse </a>
-      </nav>
-    </header>
+    <div th:replace="~{fragments/menu :: menu}"></div>
 
     <main>
       <a
         class="volver"
-        th:href="@{/web/cursos/{id}/unidades(id=${unidad.cursoId})}"
+        th:href="@{/web/cursos/{id}/unidades(
+            id=${unidad.cursoId}
+       )}"
       >
         Volver a unidades
       </a>
@@ -110,7 +139,11 @@
       </p>
 
       <article class="leccion" th:each="leccion : ${lecciones}">
-        <h3 th:text="${leccion.orden + '. ' + leccion.titulo}">
+        <h3
+          th:text="${leccion.orden
+                + '. '
+                + leccion.titulo}"
+        >
           1. Nombre de la lección
         </h3>
 
@@ -118,7 +151,9 @@
 
         <a
           class="boton"
-          th:href="@{/web/lecciones/{id}/ejercicios(id=${leccion.id})}"
+          th:href="@{/web/lecciones/{id}/ejercicios(
+                id=${leccion.id}
+           )}"
         >
           Ver ejercicios
         </a>
