@@ -16,7 +16,7 @@ public class Leccion {
 
     @ManyToOne (optional = false) //ManyToOne: muchas lecciones pertenecen a una unidad
     @JoinColumn (name = "unidad_id")//JoinColumn: le pone nombre a esa columna de la clave foránea
-    private Long unidadId; //indica a qué unidad pertenece . Vinculo con clase Unidad
+    private Unidad unidad; //indica a qué unidad pertenece . Vinculo con clase Unidad
 
     @Column(nullable = false)
     private String titulo;
@@ -29,9 +29,9 @@ public class Leccion {
 
     public Leccion() {} //constructor vacio
 
-    public Leccion(Long id, Long unidadId, String titulo, String explicacion, int orden) {
+    public Leccion(Long id, Unidad unidad, String titulo, String explicacion, int orden) {
         this.id = id;
-        this.unidadId = unidadId;
+        this.unidad = unidad;
         this.titulo = titulo;
         this.explicacion = explicacion;
         this.orden = orden;
@@ -39,8 +39,8 @@ public class Leccion {
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
-    public Long getUnidadId() { return unidadId; }
-    public void setUnidadId(Long unidadId) { this.unidadId = unidadId; }
+    public Unidad getUnidadId() { return unidad; }
+    public void setUnidadId(Unidad unidad) { this.unidad = unidad; }
     public String getTitulo() { return titulo; }
     public void setTitulo(String titulo) { this.titulo = titulo; }
     public String getExplicacion() { return explicacion; }

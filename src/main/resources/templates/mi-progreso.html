@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mi progreso | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav form {
+        margin: 0;
+      }
+
+      nav button {
+        padding: 7px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 24px;
+      }
+
+      h1,
+      h2 {
+        color: #17324d;
+      }
+
+      .resumen,
+      .progreso {
+        margin-bottom: 20px;
+        padding: 22px;
+        background: white;
+        border-radius: 10px;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      .progreso {
+        border-left: 6px solid #087e8b;
+      }
+
+      .correcto {
+        color: #147d3f;
+        font-weight: bold;
+      }
+
+      .pendiente {
+        color: #a12828;
+        font-weight: bold;
+      }
+
+      progress {
+        width: 100%;
+        height: 22px;
+      }
+
+      ul {
+        padding-left: 22px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <nav>
+        <strong>Javali</strong>
+
+        <a th:href="@{/}"> Inicio </a>
+
+        <a th:href="@{/web/cursos}"> Cursos </a>
+
+        <a th:href="@{/web/mi-progreso}"> Mi progreso </a>
+
+        <form th:action="@{/logout}" method="post">
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      </nav>
+    </header>
+
+    <main>
+      <h1>Mi progreso</h1>
+
+      <p>
+        Usuario:
+        <strong th:text="${usuario.nombre}"> Nombre </strong>
+      </p>
+
+      <section class="resumen">
+        <h2>Resumen general</h2>
+
+        <p>
+          Intentos realizados:
+          <strong th:text="${resumen.totalIntentos}"> 0 </strong>
+        </p>
+
+        <p>
+          Respuestas correctas:
+          <strong th:text="${resumen.respuestasCorrectas}"> 0 </strong>
+        </p>
+
+        <p>
+          Porcentaje general:
+          <strong
+            th:text="${#numbers.formatDecimal(
+                    resumen.porcentajeGeneral,
+                    1,
+                    2
+            ) + '%'}"
+          >
+            0%
+          </strong>
+        </p>
+
+        <p th:if="${resumen.errorFrecuente != null}">
+          Error más frecuente:
+          <strong th:text="${resumen.errorFrecuente}"> SINTAXIS </strong>
+        </p>
+
+        <p>
+          Recomendación:
+          <strong th:text="${resumen.recomendacion}">
+            Recomendación de aprendizaje
+          </strong>
+        </p>
+
+        <div>
+          <h3>Fortalezas</h3>
+
+          <p th:if="${#lists.isEmpty(resumen.fortalezas)}">
+            Todavía no se identificaron fortalezas.
+          </p>
+
+          <ul th:if="${!#lists.isEmpty(resumen.fortalezas)}">
+            <li
+              th:each="fortaleza : ${resumen.fortalezas}"
+              th:text="${fortaleza}"
+            >
+              Fortaleza
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Temas pendientes</h3>
+
+          <p th:if="${#lists.isEmpty(resumen.temasPendientes)}">
+            No hay temas pendientes registrados.
+          </p>
+
+          <ul th:if="${!#lists.isEmpty(resumen.temasPendientes)}">
+            <li th:each="tema : ${resumen.temasPendientes}" th:text="${tema}">
+              Tema pendiente
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <h2>Progreso por lección</h2>
+
+      <p th:if="${#lists.isEmpty(progresos)}">
+        Todavía no realizaste ejercicios.
+      </p>
+
+      <article class="progreso" th:each="progreso : ${progresos}">
+        <h3 th:text="${progreso.tituloLeccion}">Nombre de la lección</h3>
+
+        <p>
+          Intentos:
+          <strong th:text="${progreso.cantidadIntentos}"> 0 </strong>
+        </p>
+
+        <p>
+          Respuestas correctas:
+          <strong th:text="${progreso.respuestasCorrectas}"> 0 </strong>
+        </p>
+
+        <p>
+          Porcentaje:
+          <strong
+            th:text="${#numbers.formatDecimal(
+                    progreso.porcentajeAciertos,
+                    1,
+                    2
+            ) + '%'}"
+          >
+            0%
+          </strong>
+        </p>
+
+        <progress
+          max="100"
+          th:value="${progreso.porcentajeAciertos}"
+        ></progress>
+
+        <p class="correcto" th:if="${progreso.completada}">
+          Lección completada
+        </p>
+
+        <p class="pendiente" th:if="${!progreso.completada}">
+          Lección pendiente
+        </p>
+      </article>
+    </main>
+  </body>
+</html>
