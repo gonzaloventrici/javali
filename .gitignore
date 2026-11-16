@@ -42,3 +42,4 @@ src/main/resources/application-local.properties
 javali.db
 *.db-journal
 target/
+*.log

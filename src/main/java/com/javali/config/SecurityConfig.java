@@ -100,10 +100,22 @@ public class SecurityConfig {
                                 "/api/usuarios/*/progresos",
                                 "/api/usuarios/*/progreso/**",
                                 "/api/usuarios/*/lecciones/*/estado",
-                                "/api/usuarios/*/evaluaciones"
+                                "/api/usuarios/*/evaluaciones",
+                                "/web/ejercicios/**",
+                                "/web/mi-progreso"
                                 )
                 .authenticated()
                 // Todo lo demás necesita autenticación.
+                .requestMatchers(
+                                "/login",
+                                "/registro",
+                                "/error",
+                                "/",
+                                "/web/**",
+                                "/css/**",
+                                "/images/**"
+                                )
+                .permitAll()
                 .anyRequest()
                 .authenticated()
                 )
