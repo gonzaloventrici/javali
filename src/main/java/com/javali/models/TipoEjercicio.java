@@ -5,5 +5,7 @@
 package com.javali.models;
 
 public enum TipoEjercicio {
-    OPCIONES,ORDENAR,ENCONTRAR_ERROR
+    OPCIONES,
+    ORDENAR,
+    ENCONTRAR_ERROR
 }
