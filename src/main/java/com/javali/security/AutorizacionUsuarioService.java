@@ -16,10 +16,7 @@ public class AutorizacionUsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
- //Comprueba si el usuario autenticado puede acceder a los datos del usuario indicado.
-    // @param authentication autenticación actual
-    // @param usuarioId identificador del usuario solicitado
-    // @return true para el propietario o un administrador
+    //Comprueba si el usuario autenticado puede acceder a los datos del usuario indicado.
     public boolean puedeAcceder(
             Authentication authentication,
             Long usuarioId) {
