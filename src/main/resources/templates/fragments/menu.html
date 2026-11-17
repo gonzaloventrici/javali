@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <body>
+    <header th:fragment="menu">
+      <nav>
+        <strong>Javali</strong>
+
+        <a th:href="@{/}"> Inicio </a>
+
+        <a th:href="@{/web/cursos}"> Cursos </a>
+
+        <a th:if="${autenticado}" th:href="@{/web/evaluacion}">
+          Evaluación inicial
+        </a>
+
+        <a th:if="${autenticado}" th:href="@{/web/mi-progreso}">
+          Mi progreso
+        </a>
+
+        <span th:if="${autenticado}" th:text="${emailUsuario}">
+          usuario@javali.com
+        </span>
+
+        <a th:if="${!autenticado}" th:href="@{/login}"> Iniciar sesión </a>
+
+        <a th:if="${!autenticado}" th:href="@{/registro}"> Registrarse </a>
+
+        <form
+          th:if="${autenticado}"
+          th:action="@{/logout}"
+          method="post"
+          class="form-logout"
+        >
+          <button type="submit">Cerrar sesión</button>
+        </form>
+      </nav>
+    </header>
+  </body>
+</html>

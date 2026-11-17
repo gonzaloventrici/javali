@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resultado de evaluación | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      main {
+        max-width: 650px;
+        margin: 48px auto;
+        padding: 32px;
+        background: white;
+        border-left: 6px solid #7048a8;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h1,
+      h2 {
+        color: #17324d;
+      }
+
+      .nivel-recomendado {
+        padding: 18px;
+        background: #f1eafd;
+        border-radius: 8px;
+      }
+
+      label {
+        display: block;
+        margin-top: 20px;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      select {
+        padding: 10px;
+        border: 1px solid #b8c2cc;
+        border-radius: 6px;
+      }
+
+      .boton {
+        display: block;
+        margin-top: 16px;
+        padding: 11px 16px;
+        border: none;
+        border-radius: 7px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      .boton:hover {
+        background: #066975;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <h1>Resultado de la evaluación</h1>
+
+      <p>
+        Respuestas correctas:
+
+        <strong
+          th:text="${evaluacion.respuestasCorrectas
+                + ' de '
+                + evaluacion.totalPreguntas}"
+        >
+          4 de 5
+        </strong>
+      </p>
+
+      <p>
+        Porcentaje:
+
+        <strong
+          th:text="${#numbers.formatDecimal(
+                evaluacion.porcentaje,
+                1,
+                2
+        ) + '%'}"
+        >
+          80%
+        </strong>
+      </p>
+
+      <section class="nivel-recomendado">
+        <h2>Nivel recomendado</h2>
+
+        <strong th:text="${evaluacion.nivelRecomendado}"> AVANZADO </strong>
+      </section>
+
+      <form
+        th:action="@{/web/evaluaciones/{id}/nivel(
+                id=${evaluacion.id}
+          )}"
+        method="post"
+      >
+        <label for="nivelElegido">
+          Elegí el nivel con el que querés continuar
+        </label>
+
+        <select id="nivelElegido" name="nivelElegido" required>
+          <option value="">Seleccioná un nivel</option>
+
+          <option
+            th:each="nivel : ${niveles}"
+            th:value="${nivel}"
+            th:text="${nivel}"
+            th:selected="${nivel
+                            == evaluacion.nivelRecomendado}"
+          >
+            INICIAL
+          </option>
+        </select>
+
+        <button class="boton" type="submit">Guardar nivel y continuar</button>
+      </form>
+    </main>
+  </body>
+</html>

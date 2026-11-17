@@ -14,23 +14,56 @@
         background: #f4f6f8;
         color: #1f2937;
       }
+
       header {
         background: #17324d;
         color: white;
         padding: 18px 28px;
       }
+
       nav {
         display: flex;
         gap: 18px;
         align-items: center;
       }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
       nav a {
         color: white;
         text-decoration: none;
       }
+
       nav a:hover {
         text-decoration: underline;
       }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
+      }
+
       main {
         max-width: 500px;
         margin: 48px auto;
@@ -39,18 +72,22 @@
         border-radius: 12px;
         box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
       }
+
       h1 {
         margin-top: 0;
         color: #17324d;
       }
+
       .campo {
         margin-bottom: 20px;
       }
+
       label {
         display: block;
         margin-bottom: 6px;
         font-weight: bold;
       }
+
       input {
         box-sizing: border-box;
         width: 100%;
@@ -59,11 +96,13 @@
         border-radius: 6px;
         font-size: 16px;
       }
+
       input:focus {
         border-color: #087e8b;
         outline: none;
       }
-      button {
+
+      .boton-crear {
         width: 100%;
         padding: 12px 18px;
         border: none;
@@ -73,40 +112,40 @@
         font-size: 16px;
         cursor: pointer;
       }
-      button:hover {
+
+      .boton-crear:hover {
         background: #066975;
       }
+
       .error {
         margin-top: 6px;
         color: #a12828;
         font-size: 14px;
       }
+
       .ayuda {
+        margin-top: 6px;
         color: #5d6875;
         font-size: 14px;
       }
+
       .login {
         margin-top: 22px;
         text-align: center;
       }
+
       .login a {
         color: #087e8b;
+      }
+
+      .login a:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
 
   <body>
-    <header>
-      <nav>
-        <strong>Javali</strong>
-
-        <a th:href="@{/}"> Inicio </a>
-
-        <a th:href="@{/web/cursos}"> Cursos </a>
-
-        <a th:href="@{/login}"> Iniciar sesión </a>
-      </nav>
-    </header>
+    <div th:replace="~{fragments/menu :: menu}"></div>
 
     <main>
       <h1>Crear una cuenta</h1>
@@ -122,6 +161,8 @@
             type="text"
             th:field="*{nombre}"
             placeholder="Ingresá tu nombre"
+            autocomplete="name"
+            required
           />
 
           <p
@@ -141,6 +182,8 @@
             type="email"
             th:field="*{email}"
             placeholder="nombre@correo.com"
+            autocomplete="email"
+            required
           />
 
           <p
@@ -164,6 +207,10 @@
             type="password"
             th:field="*{password}"
             placeholder="Mínimo 8 caracteres"
+            autocomplete="new-password"
+            minlength="8"
+            maxlength="100"
+            required
           />
 
           <p
@@ -179,7 +226,7 @@
           </p>
         </div>
 
-        <button type="submit">Crear cuenta</button>
+        <button class="boton-crear" type="submit">Crear cuenta</button>
       </form>
 
       <p class="login">

@@ -102,7 +102,9 @@ public class SecurityConfig {
                                 "/api/usuarios/*/lecciones/*/estado",
                                 "/api/usuarios/*/evaluaciones",
                                 "/web/ejercicios/**",
-                                "/web/mi-progreso"
+                                "/web/mi-progreso",
+                                "/web/evaluaciones/**",
+                                "/web/evaluacion"
                                 )
                 .authenticated()
                 // Todo lo demás necesita autenticación.

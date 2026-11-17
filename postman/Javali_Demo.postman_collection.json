@@ -1,0 +1,2484 @@
+{
+  "info": {
+    "_postman_id": "1d27db5f-1ccd-4b25-b84f-0ae478de11c0",
+    "name": "Javali Demo - Carga inicial",
+    "description": "Carga reproducible de contenidos de demostración para Javali. Ejecutar con el perfil demo activo y el environment Javali Demo seleccionado.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "basic",
+    "basic": [
+      {
+        "key": "username",
+        "value": "{{adminEmail}}",
+        "type": "string"
+      },
+      {
+        "key": "password",
+        "value": "{{adminPassword}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [],
+  "variable": [],
+  "item": [
+    {
+      "name": "Carga inicial",
+      "item": [
+        {
+          "name": "01 - Verificar API",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cursos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cursos"
+              ]
+            },
+            "description": "01 - Verificar API",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"API disponible\", function () { pm.response.to.have.status(200); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Crear curso",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cursos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cursos"
+              ]
+            },
+            "description": "02 - Crear curso",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Fundamentos de Java\",\n  \"descripcion\": \"Curso introductorio sobre variables, tipos de datos, condicionales y ciclos.\",\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"cursoId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 - Crear unidad Variables",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cursos/{{cursoId}}/unidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{cursoId}}",
+                "unidades"
+              ]
+            },
+            "description": "03 - Crear unidad Variables",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Variables y tipos de datos\",\n  \"description\": \"Declaración, asignación y uso de tipos primitivos.\",\n  \"orden\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"unidadVariablesId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Crear unidad Control",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/cursos/{{cursoId}}/unidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{cursoId}}",
+                "unidades"
+              ]
+            },
+            "description": "04 - Crear unidad Control",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Estructuras de control\",\n  \"description\": \"Condicionales y ciclos para controlar la ejecución.\",\n  \"orden\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"unidadControlId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Crear lección Variables",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/unidades/{{unidadVariablesId}}/lecciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "unidades",
+                "{{unidadVariablesId}}",
+                "lecciones"
+              ]
+            },
+            "description": "05 - Crear lección Variables",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Declaración de variables\",\n  \"explicacion\": \"Una variable se declara indicando el tipo, el nombre y opcionalmente un valor inicial.\",\n  \"orden\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"leccionVariablesId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Crear lección Tipos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/unidades/{{unidadVariablesId}}/lecciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "unidades",
+                "{{unidadVariablesId}}",
+                "lecciones"
+              ]
+            },
+            "description": "06 - Crear lección Tipos",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Tipos primitivos\",\n  \"explicacion\": \"Java utiliza tipos como int, double, boolean y char para representar valores simples.\",\n  \"orden\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"leccionTiposId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Crear lección Condicionales",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/unidades/{{unidadControlId}}/lecciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "unidades",
+                "{{unidadControlId}}",
+                "lecciones"
+              ]
+            },
+            "description": "07 - Crear lección Condicionales",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Condicionales\",\n  \"explicacion\": \"Las estructuras if y else permiten ejecutar código según una condición.\",\n  \"orden\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"leccionCondicionalesId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 - Crear lección Ciclos",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/unidades/{{unidadControlId}}/lecciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "unidades",
+                "{{unidadControlId}}",
+                "lecciones"
+              ]
+            },
+            "description": "08 - Crear lección Ciclos",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"titulo\": \"Ciclos\",\n  \"explicacion\": \"Los ciclos for y while permiten repetir instrucciones.\",\n  \"orden\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"leccionCiclosId\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 - Crear ejercicio 1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionVariablesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionVariablesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "09 - Crear ejercicio 1",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Cuál declaración crea correctamente una variable entera?\",\n  \"codigo\": null,\n  \"explicacion\": \"En Java se escribe primero el tipo, luego el nombre y finalmente el valor.\",\n  \"pista\": \"Buscá la opción que comienza con int.\",\n  \"orden\": 1,\n  \"opciones\": [\n    \"edad int = 20;\",\n    \"int edad = 20;\",\n    \"variable edad = 20;\"\n  ],\n  \"indiceCorrecto\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio1Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 - Crear ejercicio 2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionVariablesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionVariablesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "10 - Crear ejercicio 2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Qué valor tendrá resultado?\",\n  \"codigo\": \"int resultado = 2 + 3;\",\n  \"explicacion\": \"El operador + suma ambos números enteros.\",\n  \"pista\": \"Resolvé la expresión aritmética.\",\n  \"orden\": 2,\n  \"opciones\": [\n    \"2\",\n    \"3\",\n    \"5\",\n    \"23\"\n  ],\n  \"indiceCorrecto\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio2Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 - Crear ejercicio 3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionTiposId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionTiposId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "11 - Crear ejercicio 3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Qué tipo conviene usar para representar un precio con decimales?\",\n  \"codigo\": null,\n  \"explicacion\": \"double permite almacenar números con parte decimal.\",\n  \"pista\": \"Buscá un tipo numérico que admita decimales.\",\n  \"orden\": 1,\n  \"opciones\": [\n    \"boolean\",\n    \"double\",\n    \"char\",\n    \"int\"\n  ],\n  \"indiceCorrecto\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio3Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 - Crear ejercicio 4",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionTiposId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionTiposId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "12 - Crear ejercicio 4",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Cuál es un valor booleano válido?\",\n  \"codigo\": null,\n  \"explicacion\": \"Los valores booleanos son true y false, sin comillas.\",\n  \"pista\": \"No debe ser texto ni un número.\",\n  \"orden\": 2,\n  \"opciones\": [\n    \"\\\"true\\\"\",\n    \"1\",\n    \"true\",\n    \"'true'\"\n  ],\n  \"indiceCorrecto\": 2\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio4Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - Crear ejercicio 5",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionCondicionalesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionCondicionalesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "13 - Crear ejercicio 5",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Qué muestra este código?\",\n  \"codigo\": \"int edad = 20;\\nif (edad >= 18) {\\n    System.out.println(\\\"Mayor\\\");\\n} else {\\n    System.out.println(\\\"Menor\\\");\\n}\",\n  \"explicacion\": \"La condición 20 >= 18 es verdadera.\",\n  \"pista\": \"Evaluá primero la condición del if.\",\n  \"orden\": 1,\n  \"opciones\": [\n    \"Mayor\",\n    \"Menor\",\n    \"20\",\n    \"No compila\"\n  ],\n  \"indiceCorrecto\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio5Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "14 - Crear ejercicio 6",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionCondicionalesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionCondicionalesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "14 - Crear ejercicio 6",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Qué operador comprueba si dos valores son iguales?\",\n  \"codigo\": null,\n  \"explicacion\": \"El operador == compara igualdad.\",\n  \"pista\": \"Un solo signo igual realiza una asignación.\",\n  \"orden\": 2,\n  \"opciones\": [\n    \"=\",\n    \"==\",\n    \"!=\",\n    \">=\"\n  ],\n  \"indiceCorrecto\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio6Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "15 - Crear ejercicio 7",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionCiclosId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionCiclosId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "15 - Crear ejercicio 7",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Cuántas veces se ejecuta el cuerpo del ciclo?\",\n  \"codigo\": \"for (int i = 0; i < 3; i++) {\\n    System.out.println(i);\\n}\",\n  \"explicacion\": \"El ciclo se ejecuta para i igual a 0, 1 y 2.\",\n  \"pista\": \"Enumerá los valores que cumplen i menor que 3.\",\n  \"orden\": 1,\n  \"opciones\": [\n    \"2\",\n    \"3\",\n    \"4\",\n    \"Infinitas\"\n  ],\n  \"indiceCorrecto\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio7Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16 - Crear ejercicio 8",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionCiclosId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionCiclosId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "16 - Crear ejercicio 8",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"OPCIONES\",\n  \"enunciado\": \"¿Qué necesita un ciclo while para finalizar?\",\n  \"codigo\": null,\n  \"explicacion\": \"El while finaliza cuando su condición resulta falsa.\",\n  \"pista\": \"Pensá qué sucede si la condición siempre es verdadera.\",\n  \"orden\": 2,\n  \"opciones\": [\n    \"Que su condición pueda volverse falsa\",\n    \"Una variable String\",\n    \"Un método main adicional\",\n    \"Un operador de suma obligatorio\"\n  ],\n  \"indiceCorrecto\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio8Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "18 - Retroalimentación E1 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio1Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio1Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "18 - Retroalimentación E1 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"SINTAXIS\",\n  \"explicacion\": \"El tipo debe aparecer antes del nombre de la variable.\",\n  \"pista\": \"Revisá el orden de int y edad.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "19 - Retroalimentación E1 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio1Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio1Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "19 - Retroalimentación E1 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"Java no utiliza la palabra variable para declarar datos.\",\n  \"pista\": \"La declaración comienza indicando un tipo válido.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "20 - Retroalimentación E2 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio2Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio2Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "20 - Retroalimentación E2 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"LOGICA\",\n  \"explicacion\": \"La expresión requiere sumar ambos operandos.\",\n  \"pista\": \"Sumá 2 y 3.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "21 - Retroalimentación E2 O1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio2Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio2Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "21 - Retroalimentación E2 O1",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 1,\n  \"categoriaError\": \"LOGICA\",\n  \"explicacion\": \"El valor no corresponde al resultado completo.\",\n  \"pista\": \"Incluí los dos operandos.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "22 - Retroalimentación E2 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio2Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio2Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "22 - Retroalimentación E2 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"Los enteros se suman y no se concatenan.\",\n  \"pista\": \"La concatenación ocurre cuando interviene texto.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "23 - Retroalimentación E3 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio3Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio3Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "23 - Retroalimentación E3 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"boolean representa true o false.\",\n  \"pista\": \"Un precio necesita un tipo numérico.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "24 - Retroalimentación E3 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio3Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio3Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "24 - Retroalimentación E3 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"char representa un único carácter.\",\n  \"pista\": \"Un precio puede tener varios dígitos.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "25 - Retroalimentación E3 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio3Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio3Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "25 - Retroalimentación E3 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"int no conserva la parte decimal.\",\n  \"pista\": \"Elegí un tipo de punto flotante.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "26 - Retroalimentación E4 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio4Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio4Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "26 - Retroalimentación E4 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"El valor entre comillas dobles es un String.\",\n  \"pista\": \"Los booleanos no llevan comillas.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "27 - Retroalimentación E4 O1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio4Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio4Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "27 - Retroalimentación E4 O1",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 1,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"Java no usa 1 como literal booleano.\",\n  \"pista\": \"Usá true o false.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "28 - Retroalimentación E4 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio4Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio4Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "28 - Retroalimentación E4 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"COMPILACION\",\n  \"explicacion\": \"Las comillas simples representan caracteres.\",\n  \"pista\": \"El literal booleano no lleva comillas.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "29 - Retroalimentación E5 O1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio5Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio5Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "29 - Retroalimentación E5 O1",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 1,\n  \"categoriaError\": \"LOGICA\",\n  \"explicacion\": \"El bloque else no se ejecuta porque la condición es verdadera.\",\n  \"pista\": \"Compará 20 con 18.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "30 - Retroalimentación E5 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio5Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio5Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "30 - Retroalimentación E5 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"El código imprime texto, no la variable edad.\",\n  \"pista\": \"Revisá el argumento de println.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "31 - Retroalimentación E5 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio5Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio5Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "31 - Retroalimentación E5 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"COMPILACION\",\n  \"explicacion\": \"La sintaxis presentada es válida.\",\n  \"pista\": \"Buscá qué bloque se ejecuta.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "32 - Retroalimentación E6 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio6Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio6Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "32 - Retroalimentación E6 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"SINTAXIS\",\n  \"explicacion\": \"El operador = asigna un valor.\",\n  \"pista\": \"La comparación usa dos signos iguales.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "33 - Retroalimentación E6 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio6Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio6Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "33 - Retroalimentación E6 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"El operador != comprueba desigualdad.\",\n  \"pista\": \"Buscá el operador sin negación.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "34 - Retroalimentación E6 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio6Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio6Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "34 - Retroalimentación E6 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"El operador >= compara mayor o igual.\",\n  \"pista\": \"La igualdad exacta usa otro operador.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "35 - Retroalimentación E7 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio7Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio7Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "35 - Retroalimentación E7 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"LOGICA\",\n  \"explicacion\": \"El conteo incluye la iteración con i igual a 0.\",\n  \"pista\": \"Contá 0, 1 y 2.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "36 - Retroalimentación E7 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio7Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio7Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "36 - Retroalimentación E7 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"LOGICA\",\n  \"explicacion\": \"Cuando i vale 3 la condición deja de cumplirse.\",\n  \"pista\": \"La comparación es menor que.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "37 - Retroalimentación E7 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio7Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio7Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "37 - Retroalimentación E7 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"i aumenta y alcanza el límite.\",\n  \"pista\": \"Observá i++. \"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "38 - Retroalimentación E8 O1",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio8Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio8Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "38 - Retroalimentación E8 O1",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 1,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"String no determina la finalización del while.\",\n  \"pista\": \"La ejecución depende de la condición.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "39 - Retroalimentación E8 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio8Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio8Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "39 - Retroalimentación E8 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"No se necesita otro método main.\",\n  \"pista\": \"Revisá la condición booleana.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "40 - Retroalimentación E8 O3",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio8Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio8Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "40 - Retroalimentación E8 O3",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"while puede funcionar sin sumas.\",\n  \"pista\": \"La condición debe poder cambiar.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "99 - Verificar carga",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cursos/{{cursoId}}/unidades",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cursos",
+                "{{cursoId}}",
+                "unidades"
+              ]
+            },
+            "description": "99 - Verificar carga",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Carga disponible\", function () { pm.response.to.have.status(200); pm.expect(pm.response.json().length).to.eql(2); });"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

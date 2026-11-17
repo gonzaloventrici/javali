@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -96,7 +97,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
         pregunta.setEnunciado(request.enunciado());
         pregunta.setCodigo(request.codigo());
         pregunta.setOrden(request.orden());
-        pregunta.setOpciones(List.copyOf(request.opciones()));
+        pregunta.setOpciones(new ArrayList<>(request.opciones()));
         pregunta.setIndiceCorrecto(request.indiceCorrecto());
 
         return preguntaARespuesta(

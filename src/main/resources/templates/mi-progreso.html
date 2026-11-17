@@ -5,7 +5,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Mi progreso | Javali</title>
+    <title>Lecciones | Javali</title>
 
     <style>
       body {
@@ -27,6 +27,10 @@
         align-items: center;
       }
 
+      nav strong {
+        margin-right: 8px;
+      }
+
       nav a {
         color: white;
         text-decoration: none;
@@ -36,17 +40,27 @@
         text-decoration: underline;
       }
 
-      nav form {
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
         margin: 0;
       }
 
-      nav button {
-        padding: 7px 12px;
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
         border: none;
         border-radius: 6px;
         background: #087e8b;
         color: white;
         cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
       }
 
       main {
@@ -60,180 +74,146 @@
         color: #17324d;
       }
 
-      .resumen,
-      .progreso {
-        margin-bottom: 20px;
+      .leccion {
+        margin-bottom: 18px;
         padding: 22px;
         background: white;
+        border-left: 6px solid #087e8b;
         border-radius: 10px;
         box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
       }
 
-      .progreso {
-        border-left: 6px solid #087e8b;
+      .leccion h3 {
+        margin-top: 0;
+        color: #17324d;
       }
 
-      .correcto {
-        color: #147d3f;
-        font-weight: bold;
+      .boton {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        text-decoration: none;
       }
 
-      .pendiente {
-        color: #a12828;
-        font-weight: bold;
+      .boton:hover {
+        background: #066975;
+        text-decoration: none;
       }
 
-      progress {
-        width: 100%;
-        height: 22px;
+      .volver {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #087e8b;
+        text-decoration: none;
       }
 
-      ul {
-        padding-left: 22px;
+      .volver:hover {
+        text-decoration: underline;
       }
     </style>
   </head>
 
   <body>
-    <header>
-      <nav>
-        <strong>Javali</strong>
-
-        <a th:href="@{/}"> Inicio </a>
-
-        <a th:href="@{/web/cursos}"> Cursos </a>
-
-        <a th:href="@{/web/mi-progreso}"> Mi progreso </a>
-
-        <form th:action="@{/logout}" method="post">
-          <button type="submit">Cerrar sesión</button>
-        </form>
-      </nav>
-    </header>
+    <div th:replace="~{fragments/menu :: menu}"></div>
 
     <main>
       <h1>Mi progreso</h1>
 
       <p>
         Usuario:
+
         <strong th:text="${usuario.nombre}"> Nombre </strong>
       </p>
 
-      <section class="resumen">
-        <h2>Resumen general</h2>
+      <section class="nivel">
+        <h2>Nivel de aprendizaje</h2>
 
-        <p>
-          Intentos realizados:
-          <strong th:text="${resumen.totalIntentos}"> 0 </strong>
-        </p>
+        <div th:if="${evaluacion != null}">
+          <p>
+            Evaluación realizada:
 
-        <p>
-          Respuestas correctas:
-          <strong th:text="${resumen.respuestasCorrectas}"> 0 </strong>
-        </p>
-
-        <p>
-          Porcentaje general:
-          <strong
-            th:text="${#numbers.formatDecimal(
-                    resumen.porcentajeGeneral,
-                    1,
-                    2
-            ) + '%'}"
-          >
-            0%
-          </strong>
-        </p>
-
-        <p th:if="${resumen.errorFrecuente != null}">
-          Error más frecuente:
-          <strong th:text="${resumen.errorFrecuente}"> SINTAXIS </strong>
-        </p>
-
-        <p>
-          Recomendación:
-          <strong th:text="${resumen.recomendacion}">
-            Recomendación de aprendizaje
-          </strong>
-        </p>
-
-        <div>
-          <h3>Fortalezas</h3>
-
-          <p th:if="${#lists.isEmpty(resumen.fortalezas)}">
-            Todavía no se identificaron fortalezas.
+            <strong th:text="${evaluacion.fecha}"> Fecha de evaluación </strong>
           </p>
 
-          <ul th:if="${!#lists.isEmpty(resumen.fortalezas)}">
-            <li
-              th:each="fortaleza : ${resumen.fortalezas}"
-              th:text="${fortaleza}"
+          <p>
+            Resultado:
+
+            <strong
+              th:text="${evaluacion.respuestasCorrectas
+                        + ' de '
+                        + evaluacion.totalPreguntas}"
             >
-              Fortaleza
-            </li>
-          </ul>
+              4 de 5
+            </strong>
+          </p>
+
+          <p>
+            Porcentaje:
+
+            <strong
+              th:text="${#numbers.formatDecimal(
+                        evaluacion.porcentaje,
+                        1,
+                        2
+                ) + '%'}"
+            >
+              80%
+            </strong>
+          </p>
+
+          <p>
+            Nivel recomendado:
+
+            <strong th:text="${evaluacion.nivelRecomendado}"> INICIAL </strong>
+          </p>
+
+          <p th:if="${evaluacion.nivelElegido != null}">
+            Nivel elegido:
+
+            <strong th:text="${evaluacion.nivelElegido}"> INTERMEDIO </strong>
+          </p>
+
+          <p th:if="${evaluacion.nivelElegido == null}">
+            Todavía no elegiste un nivel.
+          </p>
+
+          <form
+            th:action="@{/web/evaluaciones/{id}/nivel(
+                        id=${evaluacion.id}
+                  )}"
+            method="post"
+          >
+            <label for="nivelElegido"> Seleccionar nivel </label>
+
+            <select id="nivelElegido" name="nivelElegido" required>
+              <option value="">Seleccioná un nivel</option>
+
+              <option
+                th:each="nivel : ${niveles}"
+                th:value="${nivel}"
+                th:text="${nivel}"
+                th:selected="${evaluacion.nivelElegido == nivel}"
+              >
+                INICIAL
+              </option>
+            </select>
+
+            <button type="submit">Guardar nivel</button>
+          </form>
         </div>
 
-        <div>
-          <h3>Temas pendientes</h3>
+        <div th:if="${evaluacion == null}">
+          <p>Todavía no realizaste la evaluación inicial.</p>
 
-          <p th:if="${#lists.isEmpty(resumen.temasPendientes)}">
-            No hay temas pendientes registrados.
-          </p>
+          <p>La evaluación permite recomendar un nivel según tus respuestas.</p>
 
-          <ul th:if="${!#lists.isEmpty(resumen.temasPendientes)}">
-            <li th:each="tema : ${resumen.temasPendientes}" th:text="${tema}">
-              Tema pendiente
-            </li>
-          </ul>
+          <a class="boton" th:href="@{/web/evaluacion}">
+            Realizar evaluación inicial
+          </a>
         </div>
       </section>
-
-      <h2>Progreso por lección</h2>
-
-      <p th:if="${#lists.isEmpty(progresos)}">
-        Todavía no realizaste ejercicios.
-      </p>
-
-      <article class="progreso" th:each="progreso : ${progresos}">
-        <h3 th:text="${progreso.tituloLeccion}">Nombre de la lección</h3>
-
-        <p>
-          Intentos:
-          <strong th:text="${progreso.cantidadIntentos}"> 0 </strong>
-        </p>
-
-        <p>
-          Respuestas correctas:
-          <strong th:text="${progreso.respuestasCorrectas}"> 0 </strong>
-        </p>
-
-        <p>
-          Porcentaje:
-          <strong
-            th:text="${#numbers.formatDecimal(
-                    progreso.porcentajeAciertos,
-                    1,
-                    2
-            ) + '%'}"
-          >
-            0%
-          </strong>
-        </p>
-
-        <progress
-          max="100"
-          th:value="${progreso.porcentajeAciertos}"
-        ></progress>
-
-        <p class="correcto" th:if="${progreso.completada}">
-          Lección completada
-        </p>
-
-        <p class="pendiente" th:if="${!progreso.completada}">
-          Lección pendiente
-        </p>
-      </article>
     </main>
   </body>
 </html>
