@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Registro exitoso | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      main {
+        max-width: 500px;
+        margin: 70px auto;
+        padding: 36px;
+        background: white;
+        border-left: 6px solid #147d3f;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+        text-align: center;
+      }
+
+      h1 {
+        margin-top: 0;
+        color: #17324d;
+      }
+
+      .mensaje {
+        margin: 22px 0;
+        padding: 16px;
+        background: #e4f5e9;
+        border-radius: 8px;
+        color: #0d6030;
+        font-weight: bold;
+      }
+
+      .boton {
+        display: inline-block;
+        padding: 12px 20px;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        text-decoration: none;
+      }
+
+      .boton:hover {
+        background: #066975;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <h1>Registro exitoso</h1>
+
+      <div class="mensaje">Usuario registrado correctamente.</div>
+
+      <p>Ya podés iniciar sesión con tu email y contraseña.</p>
+
+      <a class="boton" th:href="@{/login}"> Ir al login </a>
+    </main>
+  </body>
+</html>

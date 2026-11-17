@@ -111,6 +111,7 @@ public class SecurityConfig {
                 .requestMatchers(
                                 "/login",
                                 "/registro",
+                                "/registro-exitoso",
                                 "/error",
                                 "/",
                                 "/web/**",

@@ -51,6 +51,11 @@ public class RegistroWebController {
             );
             return "registro";
         }
-        return "redirect:/login?registrado";
+        return "redirect:/registro-exitoso";
+    }
+
+    @GetMapping("/registro-exitoso")
+    public String mostrarRegistroExitoso() {
+        return "registro-exitoso";
     }
 }
