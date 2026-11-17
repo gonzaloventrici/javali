@@ -5,7 +5,7 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Lecciones | Javali</title>
+    <title>Mi progreso | Javali</title>
 
     <style>
       body {
@@ -56,6 +56,7 @@
         border-radius: 6px;
         background: #087e8b;
         color: white;
+        font-size: 14px;
         cursor: pointer;
       }
 
@@ -74,43 +75,95 @@
         color: #17324d;
       }
 
-      .leccion {
-        margin-bottom: 18px;
+      .usuario {
+        margin-bottom: 20px;
+        padding: 16px;
+        background: #e8f4f5;
+        border-radius: 8px;
+      }
+
+      .nivel,
+      .resumen,
+      .progreso {
+        margin-bottom: 20px;
         padding: 22px;
         background: white;
-        border-left: 6px solid #087e8b;
         border-radius: 10px;
         box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
       }
 
-      .leccion h3 {
+      .nivel {
+        border-left: 6px solid #7048a8;
+      }
+
+      .progreso {
+        border-left: 6px solid #087e8b;
+      }
+
+      .progreso h3 {
         margin-top: 0;
         color: #17324d;
       }
 
+      .correcto {
+        color: #147d3f;
+        font-weight: bold;
+      }
+
+      .pendiente {
+        color: #a86800;
+        font-weight: bold;
+      }
+
+      .sin-datos {
+        padding: 18px;
+        background: white;
+        border-left: 6px solid #b8c2cc;
+        border-radius: 8px;
+      }
+
+      .nivel form {
+        margin-top: 18px;
+      }
+
+      .nivel label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+      }
+
+      .nivel select {
+        padding: 9px;
+        border: 1px solid #b8c2cc;
+        border-radius: 6px;
+      }
+
+      .nivel button,
       .boton {
         display: inline-block;
-        padding: 9px 14px;
-        border-radius: 8px;
+        margin-top: 10px;
+        padding: 10px 15px;
+        border: none;
+        border-radius: 7px;
         background: #087e8b;
         color: white;
         text-decoration: none;
+        cursor: pointer;
       }
 
+      .nivel button:hover,
       .boton:hover {
         background: #066975;
         text-decoration: none;
       }
 
-      .volver {
-        display: inline-block;
-        margin-bottom: 20px;
-        color: #087e8b;
-        text-decoration: none;
+      progress {
+        width: 100%;
+        height: 22px;
       }
 
-      .volver:hover {
-        text-decoration: underline;
+      ul {
+        padding-left: 22px;
       }
     </style>
   </head>
@@ -121,20 +174,20 @@
     <main>
       <h1>Mi progreso</h1>
 
-      <p>
+      <div class="usuario">
         Usuario:
 
         <strong th:text="${usuario.nombre}"> Nombre </strong>
-      </p>
+      </div>
 
       <section class="nivel">
         <h2>Nivel de aprendizaje</h2>
 
         <div th:if="${evaluacion != null}">
           <p>
-            Evaluación realizada:
+            Fecha de evaluación:
 
-            <strong th:text="${evaluacion.fecha}"> Fecha de evaluación </strong>
+            <strong th:text="${evaluacion.fecha}"> Fecha </strong>
           </p>
 
           <p>
@@ -185,7 +238,7 @@
                   )}"
             method="post"
           >
-            <label for="nivelElegido"> Seleccionar nivel </label>
+            <label for="nivelElegido"> Seleccionar otro nivel </label>
 
             <select id="nivelElegido" name="nivelElegido" required>
               <option value="">Seleccioná un nivel</option>
@@ -207,13 +260,156 @@
         <div th:if="${evaluacion == null}">
           <p>Todavía no realizaste la evaluación inicial.</p>
 
-          <p>La evaluación permite recomendar un nivel según tus respuestas.</p>
+          <p>
+            La evaluación permite recomendar un nivel según tus conocimientos
+            actuales.
+          </p>
 
           <a class="boton" th:href="@{/web/evaluacion}">
             Realizar evaluación inicial
           </a>
         </div>
       </section>
+
+      <section class="resumen">
+        <h2>Resumen general</h2>
+
+        <p>
+          Intentos realizados:
+
+          <strong th:text="${resumen.totalIntentos}"> 0 </strong>
+        </p>
+
+        <p>
+          Respuestas correctas:
+
+          <strong th:text="${resumen.respuestasCorrectas}"> 0 </strong>
+        </p>
+
+        <p>
+          Porcentaje general:
+
+          <strong
+            th:text="${#numbers.formatDecimal(
+                    resumen.porcentajeGeneral,
+                    1,
+                    2
+            ) + '%'}"
+          >
+            0%
+          </strong>
+        </p>
+
+        <p th:if="${resumen.errorFrecuente != null}">
+          Error más frecuente:
+
+          <strong th:text="${resumen.errorFrecuente}"> SINTAXIS </strong>
+        </p>
+
+        <p>
+          Recomendación:
+
+          <strong th:text="${resumen.recomendacion}">
+            Recomendación de aprendizaje
+          </strong>
+        </p>
+
+        <div>
+          <h3>Fortalezas</h3>
+
+          <p
+            th:if="${resumen.fortalezas == null
+                    or #lists.isEmpty(resumen.fortalezas)}"
+          >
+            Todavía no se identificaron fortalezas.
+          </p>
+
+          <ul
+            th:if="${resumen.fortalezas != null
+                    and !#lists.isEmpty(resumen.fortalezas)}"
+          >
+            <li
+              th:each="fortaleza : ${resumen.fortalezas}"
+              th:text="${fortaleza}"
+            >
+              Fortaleza
+            </li>
+          </ul>
+        </div>
+
+        <div>
+          <h3>Temas pendientes</h3>
+
+          <p
+            th:if="${resumen.temasPendientes == null
+                    or #lists.isEmpty(resumen.temasPendientes)}"
+          >
+            No hay temas pendientes registrados.
+          </p>
+
+          <ul
+            th:if="${resumen.temasPendientes != null
+                    and !#lists.isEmpty(resumen.temasPendientes)}"
+          >
+            <li th:each="tema : ${resumen.temasPendientes}" th:text="${tema}">
+              Tema pendiente
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <h2>Progreso por lección</h2>
+
+      <div
+        class="sin-datos"
+        th:if="${progresos == null
+                 or #lists.isEmpty(progresos)}"
+      >
+        Todavía no realizaste ejercicios de ninguna lección.
+      </div>
+
+      <article class="progreso" th:each="progreso : ${progresos}">
+        <h3 th:text="${progreso.tituloLeccion}">Nombre de la lección</h3>
+
+        <p>
+          Intentos:
+
+          <strong th:text="${progreso.cantidadIntentos}"> 0 </strong>
+        </p>
+
+        <p>
+          Respuestas correctas:
+
+          <strong th:text="${progreso.respuestasCorrectas}"> 0 </strong>
+        </p>
+
+        <p>
+          Porcentaje de aciertos:
+
+          <strong
+            th:text="${#numbers.formatDecimal(
+                    progreso.porcentajeAciertos,
+                    1,
+                    2
+            ) + '%'}"
+          >
+            0%
+          </strong>
+        </p>
+
+        <progress
+          max="100"
+          th:value="${progreso.porcentajeAciertos}"
+        ></progress>
+
+        <p class="correcto" th:if="${progreso.completada}">
+          Lección completada
+        </p>
+
+        <p class="pendiente" th:if="${!progreso.completada}">
+          Lección en progreso
+        </p>
+      </article>
     </main>
   </body>
 </html>
