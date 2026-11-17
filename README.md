@@ -425,5 +425,3 @@ Equipo: vebes
 Asignatura: Programación III
 Institución: Escuela de Ciencia y Tecnología - UNSAM
 ```
-
-Antes de la entrega final, completar nombres de integrantes, comisión, turno, fecha y URL del repositorio.
