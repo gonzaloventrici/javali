@@ -1,5 +1,6 @@
 package com.javali.controllers.web;
 
+import com.javali.config.BancoPreguntasEvaluacion;
 import com.javali.dtos.EvaluacionResponse;
 import com.javali.dtos.FinalizarEvaluacionRequest;
 import com.javali.dtos.NivelElegidoRequest;
@@ -225,95 +226,9 @@ public class EvaluacionWebController {
 
     //Agrega las preguntas de diagnóstico a una evaluación.
     private void cargarPreguntas(Long evaluacionId) {
-        evaluacionService.agregarPregunta(
-                evaluacionId,
-                new PreguntaRequest(
-                        "¿Cuál declaración crea correctamente "
-                                + "una variable entera?",
-                        null,
-                        1,
-                        List.of(
-                                "edad int = 20;",
-                                "int edad = 20;",
-                                "variable edad = 20;"
-                        ),
-                        1
-                )
-        );
-        evaluacionService.agregarPregunta(
-                evaluacionId,
-                new PreguntaRequest(
-                        "¿Qué tipo permite almacenar "
-                                + "números con decimales?",
-                        null,
-                        2,
-                        List.of(
-                                "boolean",
-                                "double",
-                                "char",
-                                "int"
-                        ),
-                        1
-                )
-        );
-        evaluacionService.agregarPregunta(
-                evaluacionId,
-                new PreguntaRequest(
-                        "¿Qué operador comprueba si "
-                                + "dos valores son iguales?",
-                        null,
-                        3,
-                        List.of(
-                                "=",
-                                "==",
-                                "!=",
-                                ">="
-                        ),
-                        1
-                )
-        );
-        evaluacionService.agregarPregunta(
-                evaluacionId,
-                new PreguntaRequest(
-                        "¿Qué muestra este código?",
-                        """
-                        int edad = 20;
-
-                        if (edad >= 18) {
-                            System.out.println("Mayor");
-                        } else {
-                            System.out.println("Menor");
-                        }
-                        """,
-                        4,
-                        List.of(
-                                "Mayor",
-                                "Menor",
-                                "20",
-                                "No compila"
-                        ),
-                        0
-                )
-        );
-        evaluacionService.agregarPregunta(
-                evaluacionId,
-                new PreguntaRequest(
-                        "¿Cuántas veces se ejecuta "
-                                + "el cuerpo del ciclo?",
-                        """
-                        for (int i = 0; i < 3; i++) {
-                            System.out.println(i);
-                        }
-                        """,
-                        5,
-                        List.of(
-                                "2",
-                                "3",
-                                "4",
-                                "Infinitas"
-                        ),
-                        1
-                )
-        );
+        for (PreguntaRequest pregunta
+                : BancoPreguntasEvaluacion.preguntas()) {
+            evaluacionService.agregarPregunta(evaluacionId, pregunta);
+        }
     }
 }

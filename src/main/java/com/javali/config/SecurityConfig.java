@@ -31,7 +31,9 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(
             HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) //para seguir probando la API con Postman.
+                // CSRF protege los formularios web (Thymeleaf agrega el token solo).
+                // La API REST se usa con Postman y credenciales en cada pedido, por eso se excluye.
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/api/**"))
                 .userDetailsService(usuarioDetailsService)
                 .authorizeHttpRequests(autorizacion ->autorizacion
                 // Registro y pantalla de ingreso.
@@ -103,6 +105,7 @@ public class SecurityConfig {
                                 "/api/usuarios/*/evaluaciones",
                                 "/web/ejercicios/**",
                                 "/web/mi-progreso",
+                                "/web/preferencias",
                                 "/web/evaluaciones/**",
                                 "/web/evaluacion"
                                 )
@@ -116,6 +119,7 @@ public class SecurityConfig {
                                 "/",
                                 "/web/**",
                                 "/css/**",
+                                "/js/**",
                                 "/images/**"
                                 )
                 .permitAll()

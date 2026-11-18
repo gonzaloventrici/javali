@@ -61,16 +61,10 @@ public class EvaluacionInicialInterceptor
             return true;
         }
         boolean evaluacionCompleta =
-                evaluacionService
-                        .listarPorUsuario(usuario.getId())
-                        .stream()
-                        .filter(evaluacion ->
-                                evaluacion != null
-                                        && evaluacion.finalizada()
-                        )
-                        .anyMatch(evaluacion ->
-                                evaluacion.nivelElegido() != null
-                        );
+                evaluacionService.tieneEvaluacionCompleta(
+                        usuario.getId()
+                );
+
         if (evaluacionCompleta) {
             return true;
         }

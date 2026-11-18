@@ -1018,6 +1018,134 @@
           ]
         },
         {
+          "name": "16a - Crear ejercicio 9 (ENCONTRAR_ERROR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionVariablesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionVariablesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "16a - Crear ejercicio 9 (ENCONTRAR_ERROR)",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ENCONTRAR_ERROR\",\n  \"enunciado\": \"Una de estas líneas no compila. ¿Cuál es?\",\n  \"codigo\": null,\n  \"explicacion\": \"A la línea String nombre = \\\"Ana\\\" le falta el punto y coma final.\",\n  \"pista\": \"Fijate cómo termina cada instrucción.\",\n  \"orden\": 3,\n  \"opciones\": [\n    \"int edad = 20;\",\n    \"String nombre = \\\"Ana\\\"\",\n    \"double precio = 9.5;\",\n    \"boolean activo = true;\"\n  ],\n  \"indiceCorrecto\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio9Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16b - Crear ejercicio 10 (ORDENAR)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/lecciones/{{leccionCondicionalesId}}/ejercicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "lecciones",
+                "{{leccionCondicionalesId}}",
+                "ejercicios"
+              ]
+            },
+            "description": "16b - Crear ejercicio 10 (ORDENAR)",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipo\": \"ORDENAR\",\n  \"enunciado\": \"Ordená las líneas para que el programa muestre \\\"Mayor\\\" cuando edad es 18 o más.\",\n  \"codigo\": null,\n  \"explicacion\": \"Primero se declara la variable, luego se evalúa la condición y, dentro del if, se imprime el mensaje.\",\n  \"pista\": \"La variable debe existir antes de usarla en el if.\",\n  \"orden\": 3,\n  \"opciones\": [\n    \"}\",\n    \"if (edad >= 18) {\",\n    \"int edad = 20;\",\n    \"    System.out.println(\\\"Mayor\\\");\"\n  ],\n  \"indiceCorrecto\": null,\n  \"ordenCorrecto\": [\n    2,\n    1,\n    3,\n    0\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", function () { pm.response.to.have.status(201); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"ejercicio10Id\", data.id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
           "name": "18 - Retroalimentación E1 O0",
           "request": {
             "method": "POST",
@@ -2423,6 +2551,130 @@
             "body": {
               "mode": "raw",
               "raw": "{\n  \"indiceOpcion\": 3,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"while puede funcionar sin sumas.\",\n  \"pista\": \"La condición debe poder cambiar.\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16c - Retroalimentación E9 O0",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio9Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio9Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "16c - Retroalimentación E9 O0",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 0,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"Esa línea está bien escrita: declara un entero y termina con punto y coma.\",\n  \"pista\": \"Buscá una instrucción que no termine con ;\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Retroalimentación creada\", function () { pm.expect(pm.response.code).to.be.oneOf([200, 201]); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "16d - Retroalimentación E9 O2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio9Id}}/retroalimentaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "ejercicios",
+                "{{ejercicio9Id}}",
+                "retroalimentaciones"
+              ]
+            },
+            "description": "16d - Retroalimentación E9 O2",
+            "auth": {
+              "type": "basic",
+              "basic": [
+                {
+                  "key": "username",
+                  "value": "{{adminEmail}}",
+                  "type": "string"
+                },
+                {
+                  "key": "password",
+                  "value": "{{adminPassword}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"indiceOpcion\": 2,\n  \"categoriaError\": \"CONCEPTO\",\n  \"explicacion\": \"double admite decimales, así que 9.5 es válido y la línea termina bien.\",\n  \"pista\": \"Buscá una instrucción que no termine con ;\"\n}",
               "options": {
                 "raw": {
                   "language": "json"

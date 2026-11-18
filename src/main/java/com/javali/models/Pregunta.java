@@ -48,6 +48,9 @@ public class Pregunta {
     @Column(nullable = false)
     private Integer indiceCorrecto;
 
+    // 1 = básica, 2 = intermedia, 3 = avanzada. Si es nulo se toma como 1.
+    private Integer dificultad;
+
     public Pregunta() {} // Constructor vacío requerido por Hibernate.
 
     public Long getId() {return id;}
@@ -62,6 +65,8 @@ public class Pregunta {
     public void setOrden(int orden) {this.orden = orden;}
     public List<String> getOpciones() {return opciones;}
     public void setOpciones(List<String> opciones) {this.opciones = opciones;}
+    public int getDificultad() {return dificultad == null ? 1 : dificultad;}
+    public void setDificultad(Integer dificultad) {this.dificultad = dificultad;}
     public Integer getIndiceCorrecto() {return indiceCorrecto;}
     public void setIndiceCorrecto(Integer indiceCorrecto) {this.indiceCorrecto = indiceCorrecto;}
 }

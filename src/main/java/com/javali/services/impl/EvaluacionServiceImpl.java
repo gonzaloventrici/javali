@@ -31,6 +31,8 @@ import java.util.Set;
 @Service
 public class EvaluacionServiceImpl implements EvaluacionService {
 
+    private static final int DIFICULTAD_AVANZADA = 3;
+
     private final EvaluacionRepository evaluacionRepository;
     private final PreguntaRepository preguntaRepository;
     private final UsuarioRepository usuarioRepository;
@@ -99,6 +101,7 @@ public class EvaluacionServiceImpl implements EvaluacionService {
         pregunta.setOrden(request.orden());
         pregunta.setOpciones(new ArrayList<>(request.opciones()));
         pregunta.setIndiceCorrecto(request.indiceCorrecto());
+        pregunta.setDificultad(request.dificultad());
 
         return preguntaARespuesta(
                 preguntaRepository.save(pregunta)
@@ -153,6 +156,10 @@ public class EvaluacionServiceImpl implements EvaluacionService {
                 construirMapaRespuestas(request.respuestas());
 
         int correctas = 0;
+        int puntosObtenidos = 0;
+        int puntosPosibles = 0;
+        int avanzadas = 0;
+        int avanzadasCorrectas = 0;
 
         for (Pregunta pregunta : preguntas) {
 
@@ -170,21 +177,33 @@ public class EvaluacionServiceImpl implements EvaluacionService {
                     pregunta.getOpciones().size()
             );
 
-            if (pregunta.getIndiceCorrecto()
-                    .equals(respuesta.indiceSeleccionado())) {
+            boolean acertada = pregunta.getIndiceCorrecto()
+                    .equals(respuesta.indiceSeleccionado());
+            boolean avanzada =
+                    pregunta.getDificultad() == DIFICULTAD_AVANZADA;
 
+            puntosPosibles += pregunta.getDificultad();
+            if (avanzada) {
+                avanzadas++;
+            }
+            if (acertada) {
                 correctas++;
+                puntosObtenidos += pregunta.getDificultad();
+                if (avanzada) {
+                    avanzadasCorrectas++;
+                }
             }
         }
 
+        // Las preguntas más difíciles pesan más en el puntaje.
         double porcentaje =
-                correctas * 100.0 / preguntas.size();
+                puntosObtenidos * 100.0 / puntosPosibles;
 
         evaluacion.setRespuestasCorrectas(correctas);
         evaluacion.setTotalPreguntas(preguntas.size());
         evaluacion.setPorcentaje(porcentaje);
         evaluacion.setNivelRecomendado(
-                calcularNivel(porcentaje)
+                calcularNivel(porcentaje, avanzadas, avanzadasCorrectas)
         );
         evaluacion.setFinalizada(true);
         evaluacion.setFecha(LocalDateTime.now());
@@ -229,6 +248,16 @@ public class EvaluacionServiceImpl implements EvaluacionService {
                 .toList();
     }
     // Devuelve las evaluaciones del usuario por fecha descendente.
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean tieneEvaluacionCompleta(Long usuarioId) {
+        return evaluacionRepository
+                .existsByUsuario_IdAndFinalizadaTrueAndNivelElegidoNotNull(
+                        usuarioId
+                );
+    }
+    // Una evaluación cuenta como completa si está finalizada y con nivel elegido.
 
     private Evaluacion buscarEvaluacion(Long evaluacionId) {
 
@@ -298,7 +327,10 @@ public class EvaluacionServiceImpl implements EvaluacionService {
     }
     // Organiza las respuestas y rechaza preguntas duplicadas.
 
-    private NivelCurso calcularNivel(double porcentaje) {
+    private NivelCurso calcularNivel(
+            double porcentaje,
+            int avanzadas,
+            int avanzadasCorrectas) {
 
         if (porcentaje < 40) {
             return NivelCurso.INICIAL;
@@ -308,9 +340,15 @@ public class EvaluacionServiceImpl implements EvaluacionService {
             return NivelCurso.INTERMEDIO;
         }
 
+        // Para ser AVANZADO no alcanza con el puntaje: hay que resolver
+        // al menos la mitad de las preguntas avanzadas, si las hay.
+        if (avanzadas > 0 && avanzadasCorrectas * 2 < avanzadas) {
+            return NivelCurso.INTERMEDIO;
+        }
+
         return NivelCurso.AVANZADO;
     }
-    // Recomienda un nivel según el porcentaje obtenido.
+    // Recomienda un nivel según el puntaje ponderado y las preguntas avanzadas.
 
     private PreguntaResponse preguntaARespuesta(
             Pregunta pregunta) {

@@ -8,14 +8,17 @@ Javali busca acompañar a estudiantes que comienzan a programar en Java y encuen
 
 El sistema permite:
 
-- Realizar una evaluación diagnóstica inicial.
+- Realizar una evaluación diagnóstica inicial de 12 preguntas con código, de básicas a avanzadas.
 - Obtener un nivel recomendado: `INICIAL`, `INTERMEDIO` o `AVANZADO`.
+- Ver el avance por curso y unidad: completados, en curso y bloqueados.
 - Elegir o modificar el nivel de aprendizaje.
 - Recorrer cursos, unidades y lecciones ordenadas.
-- Resolver ejercicios de opción múltiple.
+- Resolver ejercicios de tres tipos: elegir una opción, ordenar líneas de código y encontrar la línea con el error.
 - Recibir explicaciones y pistas según el error cometido.
 - Registrar intentos y progreso por lección.
 - Consultar fortalezas, temas pendientes y recomendaciones.
+- Ajustar tamaño de letra, contraste y tipografía, y usar toda la aplicación con teclado.
+- Ver una racha de práctica opcional, sin vidas, penalizaciones ni rankings.
 
 ## Tecnologías utilizadas
 
@@ -49,9 +52,18 @@ src/main/java/com/javali/
 ├── exceptions/          Excepciones del dominio
 ├── models/              Entidades y enumeraciones
 ├── repositories/        Acceso a datos con Spring Data JPA
+│   └── impl/            Implementaciones personalizadas de repositorios
 ├── services/            Interfaces de casos de uso
 │   └── impl/            Implementación de reglas de negocio
+├── utils/               Funciones auxiliares sin estado (orden de líneas, racha)
+├── validators/          Reglas de validación propias
 └── JavaliApplication.java
+
+src/main/resources/
+├── templates/           Vistas Thymeleaf
+└── static/
+    ├── css/javali.css   Hoja de estilos común con los ajustes de accesibilidad
+    └── js/javali.js     Reordenar líneas con teclado y foco en el resultado
 ```
 
 ### Responsabilidades principales
@@ -63,9 +75,12 @@ src/main/java/com/javali/
 | `services` | Declarar los contratos de los casos de uso. |
 | `services.impl` | Aplicar reglas de negocio, transacciones, correcciones y cálculos. |
 | `repositories` | Consultar y persistir información mediante Spring Data JPA. |
+| `repositories.impl` | Consultas personalizadas: `IntentoRepositoryCustomImpl` obtiene solo los días con práctica para calcular la racha. |
 | `models` | Representar entidades, relaciones y estado del dominio. |
 | `dtos` | Transportar datos sin exponer directamente las entidades. |
 | `config` | Configurar seguridad, perfiles de ejecución y datos iniciales. |
+| `validators` | `EjercicioValidator` valida cada tipo de ejercicio y sus respuestas; `@PasswordSegura` exige letras y números. |
+| `utils` | `OrdenUtils` y `RachaUtils`: cálculos puros y fáciles de probar. |
 
 ## Requisitos
 
@@ -165,13 +180,13 @@ Las contraseñas se almacenan como hashes BCrypt.
 Las colecciones y environments se encuentran en:
 
 ```text
-javali.postman/
+postman/
 ```
 
 La estructura puede incluir:
 
 ```text
-javali.postman/
+postman/
 ├── demo/
 │   ├── Javali_Demo.postman_collection.json
 │   └── Javali_Demo.postman_environment.json
@@ -187,7 +202,7 @@ javali.postman/
 2. Abrir la extensión Postman.
 3. Seleccionar **Import**.
 4. Elegir **Folder**.
-5. Seleccionar `javali.postman/datos-ampliados` o `javali.postman/demo`.
+5. Seleccionar `postman/datos-ampliados` o `postman/demo`.
 6. Importar la colección y el environment.
 7. Seleccionar el environment correspondiente.
 8. Ejecutar primero `00 - Verificar API` o `01 - Verificar API`.
@@ -288,6 +303,50 @@ Lección completada
 
 La regla actual considera completada una lección cuando alcanza al menos un 80% de respuestas correctas sobre los intentos registrados.
 
+## Tipos de ejercicio
+
+| Tipo | Cómo se resuelve | Datos del ejercicio |
+|---|---|---|
+| `OPCIONES` | Elegir una respuesta. | `opciones` e `indiceCorrecto`. |
+| `ENCONTRAR_ERROR` | Elegir la línea de código que tiene el error. | `opciones` son las líneas e `indiceCorrecto` la que falla. |
+| `ORDENAR` | Ordenar las líneas con botones Subir y Bajar o con Alt + flechas. | `opciones` son las líneas (en cualquier orden) y `ordenCorrecto` los índices en el orden correcto. |
+
+La retroalimentación por opción (`/api/ejercicios/{id}/retroalimentaciones`) funciona en `OPCIONES` y `ENCONTRAR_ERROR`. Un orden incorrecto en `ORDENAR` se registra como error de `LOGICA`. La respuesta correcta nunca se envía al navegador.
+
+Escribir código Java real no está implementado: requeriría compilar y ejecutar código del estudiante en un entorno aislado.
+
+## Accesibilidad (DUA) y racha
+
+Cada estudiante puede elegir en **Accesibilidad** (`/web/preferencias`):
+
+- Tamaño de letra: normal, grande o muy grande.
+- Contraste: normal o alto.
+- Tipografía: predeterminada, legible o amigable con la dislexia (usa fuentes del sistema; si el equipo tiene OpenDyslexic, se aplica).
+- Racha de práctica: se puede desactivar.
+
+Los ajustes se guardan en la tabla `preferencias_usuario` y se aplican en todas las pantallas mediante atributos `data-*` en `<html>` y `static/css/javali.css`. Las pantallas incluyen enlace para saltar al contenido, foco visible, etiquetas para lectores de pantalla y se pueden usar solo con teclado. Para quien no inició sesión se usan los valores predeterminados.
+
+La racha cuenta días seguidos con al menos un intento; sigue viva si se practicó hoy o ayer. No hay vidas, penalizaciones ni rankings.
+
+## Evaluación inicial
+
+El banco de preguntas está en `config/BancoPreguntasEvaluacion.java`: 4 básicas, 5 intermedias y 3 avanzadas, algunas con código y una sobre un mensaje real del compilador.
+
+- Cada pregunta tiene una dificultad de 1 a 3 que funciona como peso en el puntaje: las difíciles valen más.
+- Menos de 40 % del puntaje recomienda `INICIAL` y menos de 70 %, `INTERMEDIO`.
+- Para recomendar `AVANZADO` hace falta, además, resolver al menos la mitad de las preguntas avanzadas.
+- El enlace **Evaluación inicial** del menú desaparece cuando el estudiante termina la evaluación y elige su nivel.
+
+## Ruta de aprendizaje
+
+`AvanceService` calcula qué está completado, en curso o bloqueado:
+
+- Una lección se abre al completar la anterior, y la primera lección de una unidad, al completar la unidad previa.
+- Las unidades siguientes se ven en la lista, marcadas como **Bloqueada**, aunque todavía no se puedan abrir.
+- Una unidad sin lecciones aparece como **Próximamente** y no cuenta para el curso.
+- Un curso se muestra como **completado** cuando todas sus lecciones están completadas, y el listado muestra el avance con una barra de progreso.
+- Abrir por la URL una lección bloqueada vuelve a la lista con un aviso. El administrador no tiene bloqueos.
+
 ## Seguridad
 
 El proyecto utiliza Spring Security para:
@@ -297,7 +356,8 @@ El proyecto utiliza Spring Security para:
 - Diferenciar roles `ADMINISTRADOR` y `ESTUDIANTE`.
 - Restringir operaciones administrativas.
 - Evitar que un usuario modifique evaluaciones ajenas.
-- Codificar contraseñas con BCrypt.
+- Codificar contraseñas con BCrypt y exigir contraseñas con letras y números.
+- Proteger los formularios web con CSRF (la API REST `/api/**` queda excluida para poder probarla con Postman).
 
 La interfaz no constituye por sí sola un control de seguridad. Los permisos se verifican en el servidor.
 
@@ -414,6 +474,8 @@ Funcionalidades principales disponibles:
 - Recomendación y elección de nivel.
 - Corrección y retroalimentación.
 - Navegación al siguiente ejercicio.
+- Ejercicios de ordenar líneas y de encontrar el error.
+- Ajustes de accesibilidad por usuario y racha opcional.
 - Intentos y progreso por lección.
 - Datos demo reproducibles.
 - Pruebas automatizadas y cobertura.

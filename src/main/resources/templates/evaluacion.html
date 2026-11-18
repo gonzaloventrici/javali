@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  th:data-tamano="${preferencias?.tamanoLetra}"
+  th:data-contraste="${preferencias?.contraste}"
+  th:data-tipografia="${preferencias?.tipografia}"
+>
   <head>
     <meta charset="UTF-8" />
 
@@ -7,132 +13,27 @@
 
     <title>Evaluación inicial | Javali</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        color: #1f2937;
-      }
-
-      header {
-        background: #17324d;
-        color: white;
-        padding: 18px 28px;
-      }
-
-      nav {
-        display: flex;
-        gap: 18px;
-        align-items: center;
-      }
-
-      nav strong {
-        margin-right: 8px;
-      }
-
-      nav a {
-        color: white;
-        text-decoration: none;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-      }
-
-      nav span {
-        margin-left: auto;
-      }
-
-      .form-logout {
-        margin: 0;
-      }
-
-      .form-logout button {
-        width: auto;
-        margin: 0;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 6px;
-        background: #087e8b;
-        color: white;
-        cursor: pointer;
-      }
-
-      main {
-        max-width: 850px;
-        margin: 40px auto;
-        padding: 24px;
-      }
-
-      h1,
-      h2 {
-        color: #17324d;
-      }
-
-      .introduccion,
-      .pregunta {
-        margin-bottom: 20px;
-        padding: 22px;
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
-      }
-
-      .pregunta {
-        border-left: 6px solid #7048a8;
-      }
-
-      .pregunta h2 {
-        margin-top: 0;
-      }
-
-      pre {
-        overflow-x: auto;
-        padding: 14px;
-        background: #eef2f5;
-        border-radius: 6px;
-        white-space: pre-wrap;
-        font-family: Consolas, monospace;
-      }
-
-      .opcion {
-        margin: 8px 0;
-        padding: 10px;
-        background: #f4f6f8;
-        border-radius: 6px;
-      }
-
-      .opcion label {
-        display: block;
-        cursor: pointer;
-      }
-
-      .boton-finalizar {
-        padding: 12px 18px;
-        border: none;
-        border-radius: 8px;
-        background: #087e8b;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-      }
-
-      .boton-finalizar:hover {
-        background: #066975;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/javali.css}" />
+    <script th:src="@{/js/javali.js}" defer></script>
   </head>
 
   <body>
     <div th:replace="~{fragments/menu :: menu}"></div>
 
-    <main>
+    <main id="contenido">
       <section class="introduccion">
         <h1>Evaluación inicial</h1>
 
         <p>
-          Respondé las cinco preguntas para obtener una recomendación de nivel.
+          Son
+          <strong th:text="${#lists.size(preguntas)}">12</strong>
+          preguntas, de más básicas a más avanzadas. Algunas muestran código:
+          leelo con calma y pensá qué haría el programa.
+        </p>
+
+        <p>
+          Las preguntas más difíciles valen más puntos. No hay penalización por
+          equivocarse: sirve para recomendarte un nivel.
         </p>
 
         <p>Después podrás aceptar el nivel recomendado o seleccionar otro.</p>
