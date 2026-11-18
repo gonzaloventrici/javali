@@ -31,3 +31,15 @@ build/
 
 ### VS Code ###
 .vscode/
+
+target/
+*.db-journal
+.vscode/
+
+src/main/resources/application-local.properties
+src/main/resources/application-local.properties
+*.db-journal
+target/
+*.log
+
+intrucciones_para_correr.txt

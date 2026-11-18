@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ejercicios | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 24px;
+      }
+
+      h1,
+      h2 {
+        color: #17324d;
+      }
+
+      .ejercicio {
+        margin-bottom: 18px;
+        padding: 22px;
+        background: white;
+        border-left: 6px solid #087e8b;
+        border-radius: 10px;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      .ejercicio h3 {
+        color: #17324d;
+      }
+
+      .tipo {
+        margin-top: 0;
+        color: #5d6875;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      pre {
+        overflow-x: auto;
+        padding: 14px;
+        background: #eef2f5;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
+      }
+
+      .boton {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        text-decoration: none;
+      }
+
+      .boton:hover {
+        background: #066975;
+        text-decoration: none;
+      }
+
+      .volver {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #087e8b;
+        text-decoration: none;
+      }
+
+      .volver:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <a
+        class="volver"
+        th:href="@{/web/unidades/{id}/lecciones(
+            id=${leccion.unidadId}
+       )}"
+      >
+        Volver a lecciones
+      </a>
+
+      <h1 th:text="${leccion.titulo}">Nombre de la lección</h1>
+
+      <p th:text="${leccion.explicacion}">Explicación de la lección</p>
+
+      <h2>Ejercicios</h2>
+
+      <p th:if="${#lists.isEmpty(ejercicios)}">
+        Esta lección todavía no tiene ejercicios.
+      </p>
+
+      <article class="ejercicio" th:each="ejercicio : ${ejercicios}">
+        <p class="tipo" th:text="${ejercicio.tipo}">OPCIONES</p>
+
+        <h3
+          th:text="${ejercicio.orden
+                + '. '
+                + ejercicio.enunciado}"
+        >
+          1. Enunciado del ejercicio
+        </h3>
+
+        <pre
+          th:if="${ejercicio.codigo != null
+                and !ejercicio.codigo.isBlank()}"
+          th:text="${ejercicio.codigo}"
+        >
+Código del ejercicio</pre
+        >
+
+        <p>
+          Cantidad de opciones:
+
+          <strong
+            th:text="${#lists.size(
+                    ejercicio.opciones
+            )}"
+          >
+            3
+          </strong>
+        </p>
+
+        <a
+          class="boton"
+          th:href="@{/web/ejercicios/{id}(
+                id=${ejercicio.id}
+           )}"
+        >
+          Resolver ejercicio
+        </a>
+      </article>
+    </main>
+  </body>
+</html>

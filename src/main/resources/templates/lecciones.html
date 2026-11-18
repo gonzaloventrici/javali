@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Lecciones | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
+      }
+
+      main {
+        max-width: 900px;
+        margin: 40px auto;
+        padding: 24px;
+      }
+
+      h1,
+      h2 {
+        color: #17324d;
+      }
+
+      .leccion {
+        margin-bottom: 18px;
+        padding: 22px;
+        background: white;
+        border-left: 6px solid #087e8b;
+        border-radius: 10px;
+        box-shadow: 0 5px 16px rgba(0, 0, 0, 0.07);
+      }
+
+      .leccion h3 {
+        margin-top: 0;
+        color: #17324d;
+      }
+
+      .boton {
+        display: inline-block;
+        padding: 9px 14px;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        text-decoration: none;
+      }
+
+      .boton:hover {
+        background: #066975;
+        text-decoration: none;
+      }
+
+      .volver {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #087e8b;
+        text-decoration: none;
+      }
+
+      .volver:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <a
+        class="volver"
+        th:href="@{/web/cursos/{id}/unidades(
+            id=${unidad.cursoId}
+       )}"
+      >
+        Volver a unidades
+      </a>
+
+      <h1 th:text="${unidad.titulo}">Nombre de la unidad</h1>
+
+      <p th:text="${unidad.descripcion}">Descripción de la unidad</p>
+
+      <h2>Lecciones</h2>
+
+      <p th:if="${#lists.isEmpty(lecciones)}">
+        Esta unidad todavía no tiene lecciones.
+      </p>
+
+      <article class="leccion" th:each="leccion : ${lecciones}">
+        <h3
+          th:text="${leccion.orden
+                + '. '
+                + leccion.titulo}"
+        >
+          1. Nombre de la lección
+        </h3>
+
+        <p th:text="${leccion.explicacion}">Explicación de la lección</p>
+
+        <a
+          class="boton"
+          th:href="@{/web/lecciones/{id}/ejercicios(
+                id=${leccion.id}
+           )}"
+        >
+          Ver ejercicios
+        </a>
+      </article>
+    </main>
+  </body>
+</html>

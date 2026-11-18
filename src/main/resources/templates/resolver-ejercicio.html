@@ -1,0 +1,294 @@
+<!doctype html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Resolver ejercicio | Javali</title>
+
+    <style>
+      body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #f4f6f8;
+        color: #1f2937;
+      }
+
+      header {
+        background: #17324d;
+        color: white;
+        padding: 18px 28px;
+      }
+
+      nav {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+      }
+
+      nav strong {
+        margin-right: 8px;
+      }
+
+      nav a {
+        color: white;
+        text-decoration: none;
+      }
+
+      nav a:hover {
+        text-decoration: underline;
+      }
+
+      nav span {
+        margin-left: auto;
+      }
+
+      .form-logout {
+        margin: 0;
+      }
+
+      .form-logout button {
+        width: auto;
+        margin: 0;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        background: #087e8b;
+        color: white;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .form-logout button:hover {
+        background: #066975;
+      }
+
+      main {
+        max-width: 750px;
+        margin: 40px auto;
+        padding: 32px;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+      }
+
+      h1 {
+        color: #17324d;
+      }
+
+      .tipo {
+        color: #5d6875;
+        font-size: 14px;
+        font-weight: bold;
+      }
+
+      pre {
+        overflow-x: auto;
+        padding: 14px;
+        background: #eef2f5;
+        border-radius: 6px;
+        white-space: pre-wrap;
+        font-family: Consolas, monospace;
+      }
+
+      .opcion {
+        margin-bottom: 12px;
+        padding: 12px;
+        background: #f4f6f8;
+        border: 1px solid transparent;
+        border-radius: 7px;
+      }
+
+      .opcion:hover {
+        border-color: #087e8b;
+      }
+
+      .opcion label {
+        display: block;
+        cursor: pointer;
+      }
+
+      .opcion input {
+        margin-right: 8px;
+      }
+
+      .boton-responder {
+        margin-top: 15px;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 8px;
+        background: #087e8b;
+        color: white;
+        font-size: 16px;
+        cursor: pointer;
+      }
+
+      .boton-responder:hover {
+        background: #066975;
+      }
+
+      .resultado {
+        margin-top: 28px;
+        padding: 20px;
+        border-radius: 9px;
+      }
+
+      .resultado h2 {
+        margin-top: 0;
+      }
+
+      .correcta {
+        background: #e4f5e9;
+        border-left: 6px solid #147d3f;
+      }
+
+      .incorrecta {
+        background: #fdeaea;
+        border-left: 6px solid #a12828;
+      }
+
+      .volver {
+        display: inline-block;
+        margin-bottom: 20px;
+        color: #087e8b;
+        text-decoration: none;
+      }
+
+      .volver:hover {
+        text-decoration: underline;
+      }
+
+      .acciones-resultado {
+        margin-top: 22px;
+      }
+
+      .boton-continuar {
+        display: inline-block;
+        padding: 12px 18px;
+        border-radius: 8px;
+        background: #17324d;
+        color: white;
+        text-decoration: none;
+      }
+
+      .boton-continuar:hover {
+        background: #244d72;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main>
+      <a
+        class="volver"
+        th:href="@{/web/lecciones/{id}/ejercicios(
+            id=${ejercicio.leccionId}
+       )}"
+      >
+        Volver a ejercicios
+      </a>
+
+      <p class="tipo" th:text="${ejercicio.tipo}">OPCIONES</p>
+
+      <h1 th:text="${ejercicio.enunciado}">Enunciado del ejercicio</h1>
+
+      <pre
+        th:if="${ejercicio.codigo != null
+            and !ejercicio.codigo.isBlank()}"
+        th:text="${ejercicio.codigo}"
+      >
+Código del ejercicio</pre
+      >
+
+      <form
+        th:action="@{/web/ejercicios/{id}/respuesta(
+                id=${ejercicio.id}
+          )}"
+        method="post"
+      >
+        <div class="opcion" th:each="opcion, estado : ${ejercicio.opciones}">
+          <label>
+            <input
+              type="radio"
+              name="indiceSeleccionado"
+              th:value="${estado.index}"
+              th:checked="${indiceSeleccionado != null
+                               and indiceSeleccionado
+                               == estado.index}"
+              required
+            />
+
+            <span th:text="${opcion}"> Texto de la opción </span>
+          </label>
+        </div>
+
+        <button class="boton-responder" type="submit">Enviar respuesta</button>
+      </form>
+
+      <section
+        class="resultado correcta"
+        th:if="${resultado != null
+                     and resultado.correcta}"
+      >
+        <h2>Respuesta correcta</h2>
+
+        <p th:text="${resultado.explicacion}">Explicación de la respuesta.</p>
+      </section>
+
+      <section
+        class="resultado incorrecta"
+        th:if="${resultado != null
+                     and !resultado.correcta}"
+      >
+        <h2>Respuesta incorrecta</h2>
+
+        <p th:if="${resultado.categoriaError != null}">
+          Categoría del error:
+
+          <strong th:text="${resultado.categoriaError}"> SINTAXIS </strong>
+        </p>
+
+        <p th:text="${resultado.explicacion}">
+          Explicación específica del error.
+        </p>
+
+        <p
+          th:if="${resultado.pista != null
+                and !resultado.pista.isBlank()}"
+        >
+          Pista:
+
+          <strong th:text="${resultado.pista}">
+            Pista para resolver el ejercicio.
+          </strong>
+        </p>
+      </section>
+
+      <div class="acciones-resultado" th:if="${resultado != null}">
+        <a
+          class="boton-continuar"
+          th:if="${siguienteEjercicioId != null}"
+          th:href="@{/web/ejercicios/{id}(
+                id=${siguienteEjercicioId}
+           )}"
+        >
+          Continuar al siguiente ejercicio
+        </a>
+
+        <a
+          class="boton-continuar"
+          th:if="${siguienteEjercicioId == null}"
+          th:href="@{/web/lecciones/{id}/ejercicios(
+                id=${ejercicio.leccionId}
+           )}"
+        >
+          Finalizar y volver a la lección
+        </a>
+      </div>
+    </main>
+  </body>
+</html>
