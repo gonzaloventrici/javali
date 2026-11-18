@@ -2,14 +2,16 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
   <body>
     <header th:fragment="menu">
-      <nav>
+      <a class="saltar" href="#contenido">Saltar al contenido</a>
+
+      <nav aria-label="Navegación principal">
         <strong>Javali</strong>
 
         <a th:href="@{/}"> Inicio </a>
 
         <a th:href="@{/web/cursos}"> Cursos </a>
 
-        <a th:if="${autenticado}" th:href="@{/web/evaluacion}">
+        <a th:if="${evaluacionPendiente}" th:href="@{/web/evaluacion}">
           Evaluación inicial
         </a>
 
@@ -17,7 +19,25 @@
           Mi progreso
         </a>
 
-        <span th:if="${autenticado}" th:text="${emailUsuario}">
+        <a th:if="${autenticado}" th:href="@{/web/preferencias}">
+          Accesibilidad
+        </a>
+
+        <span
+          class="racha"
+          th:if="${racha != null}"
+          th:title="${'Mejor racha: ' + racha.mejorRacha}"
+          th:text="${'Racha: ' + racha.rachaActual
+                    + (racha.rachaActual == 1 ? ' día' : ' días')}"
+        >
+          Racha: 3 días
+        </span>
+
+        <span
+          class="usuario-menu"
+          th:if="${autenticado}"
+          th:text="${emailUsuario}"
+        >
           usuario@javali.com
         </span>
 

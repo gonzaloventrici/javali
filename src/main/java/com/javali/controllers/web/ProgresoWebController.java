@@ -43,22 +43,6 @@ public class ProgresoWebController {
                 evaluacionService.listarPorUsuario(
                         usuario.getId()
                 );
-        System.out.println(
-                "Evaluaciones del usuario: "
-                        + evaluaciones.size()
-        );
-        for (EvaluacionResponse evaluacion : evaluaciones) {
-                System.out.println(
-                        "Evaluacion ID="
-                                + evaluacion.id()
-                                + ", finalizada="
-                                + evaluacion.finalizada()
-                                + ", recomendado="
-                                + evaluacion.nivelRecomendado()
-                                + ", elegido="
-                                + evaluacion.nivelElegido()
-                );
-        }
         EvaluacionResponse ultimaEvaluacion = null;
         for (EvaluacionResponse evaluacion : evaluaciones) {
                 if (evaluacion == null

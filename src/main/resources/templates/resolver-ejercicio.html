@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  th:data-tamano="${preferencias?.tamanoLetra}"
+  th:data-contraste="${preferencias?.contraste}"
+  th:data-tipografia="${preferencias?.tipografia}"
+>
   <head>
     <meta charset="UTF-8" />
 
@@ -7,182 +13,14 @@
 
     <title>Resolver ejercicio | Javali</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        color: #1f2937;
-      }
-
-      header {
-        background: #17324d;
-        color: white;
-        padding: 18px 28px;
-      }
-
-      nav {
-        display: flex;
-        gap: 18px;
-        align-items: center;
-      }
-
-      nav strong {
-        margin-right: 8px;
-      }
-
-      nav a {
-        color: white;
-        text-decoration: none;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-      }
-
-      nav span {
-        margin-left: auto;
-      }
-
-      .form-logout {
-        margin: 0;
-      }
-
-      .form-logout button {
-        width: auto;
-        margin: 0;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 6px;
-        background: #087e8b;
-        color: white;
-        font-size: 14px;
-        cursor: pointer;
-      }
-
-      .form-logout button:hover {
-        background: #066975;
-      }
-
-      main {
-        max-width: 750px;
-        margin: 40px auto;
-        padding: 32px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-      }
-
-      h1 {
-        color: #17324d;
-      }
-
-      .tipo {
-        color: #5d6875;
-        font-size: 14px;
-        font-weight: bold;
-      }
-
-      pre {
-        overflow-x: auto;
-        padding: 14px;
-        background: #eef2f5;
-        border-radius: 6px;
-        white-space: pre-wrap;
-        font-family: Consolas, monospace;
-      }
-
-      .opcion {
-        margin-bottom: 12px;
-        padding: 12px;
-        background: #f4f6f8;
-        border: 1px solid transparent;
-        border-radius: 7px;
-      }
-
-      .opcion:hover {
-        border-color: #087e8b;
-      }
-
-      .opcion label {
-        display: block;
-        cursor: pointer;
-      }
-
-      .opcion input {
-        margin-right: 8px;
-      }
-
-      .boton-responder {
-        margin-top: 15px;
-        padding: 12px 18px;
-        border: none;
-        border-radius: 8px;
-        background: #087e8b;
-        color: white;
-        font-size: 16px;
-        cursor: pointer;
-      }
-
-      .boton-responder:hover {
-        background: #066975;
-      }
-
-      .resultado {
-        margin-top: 28px;
-        padding: 20px;
-        border-radius: 9px;
-      }
-
-      .resultado h2 {
-        margin-top: 0;
-      }
-
-      .correcta {
-        background: #e4f5e9;
-        border-left: 6px solid #147d3f;
-      }
-
-      .incorrecta {
-        background: #fdeaea;
-        border-left: 6px solid #a12828;
-      }
-
-      .volver {
-        display: inline-block;
-        margin-bottom: 20px;
-        color: #087e8b;
-        text-decoration: none;
-      }
-
-      .volver:hover {
-        text-decoration: underline;
-      }
-
-      .acciones-resultado {
-        margin-top: 22px;
-      }
-
-      .boton-continuar {
-        display: inline-block;
-        padding: 12px 18px;
-        border-radius: 8px;
-        background: #17324d;
-        color: white;
-        text-decoration: none;
-      }
-
-      .boton-continuar:hover {
-        background: #244d72;
-        text-decoration: none;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/javali.css}" />
+    <script th:src="@{/js/javali.js}" defer></script>
   </head>
 
   <body>
     <div th:replace="~{fragments/menu :: menu}"></div>
 
-    <main>
+    <main id="contenido">
       <a
         class="volver"
         th:href="@{/web/lecciones/{id}/ejercicios(
@@ -192,7 +30,16 @@
         Volver a ejercicios
       </a>
 
-      <p class="tipo" th:text="${ejercicio.tipo}">OPCIONES</p>
+      <p
+        class="tipo"
+        th:text="${ejercicio.tipo.name() == 'ORDENAR'
+                    ? 'ORDENAR LÍNEAS'
+                    : (ejercicio.tipo.name() == 'ENCONTRAR_ERROR'
+                        ? 'ENCONTRAR EL ERROR'
+                        : 'ELEGIR UNA OPCIÓN')}"
+      >
+        ELEGIR UNA OPCIÓN
+      </p>
 
       <h1 th:text="${ejercicio.enunciado}">Enunciado del ejercicio</h1>
 
@@ -204,32 +51,114 @@
 Código del ejercicio</pre
       >
 
+      <p class="aviso" role="alert" th:if="${errorRespuesta != null}">
+        <span th:text="${errorRespuesta}">Falta elegir una respuesta.</span>
+      </p>
+
       <form
         th:action="@{/web/ejercicios/{id}/respuesta(
                 id=${ejercicio.id}
           )}"
         method="post"
       >
-        <div class="opcion" th:each="opcion, estado : ${ejercicio.opciones}">
-          <label>
-            <input
-              type="radio"
-              name="indiceSeleccionado"
-              th:value="${estado.index}"
-              th:checked="${indiceSeleccionado != null
+        <!-- Tipo OPCIONES: elegir una respuesta -->
+        <fieldset th:if="${ejercicio.tipo.name() == 'OPCIONES'}">
+          <legend>Elegí una respuesta</legend>
+
+          <div class="opcion" th:each="opcion, estado : ${ejercicio.opciones}">
+            <label>
+              <input
+                type="radio"
+                name="indiceSeleccionado"
+                th:value="${estado.index}"
+                th:checked="${indiceSeleccionado != null
                                and indiceSeleccionado
                                == estado.index}"
-              required
-            />
+                required
+              />
+              <span th:text="${opcion}"> Texto de la opción </span>
+            </label>
+          </div>
+        </fieldset>
 
-            <span th:text="${opcion}"> Texto de la opción </span>
-          </label>
-        </div>
+        <!-- Tipo ENCONTRAR_ERROR: elegir la línea con el error -->
+        <fieldset th:if="${ejercicio.tipo.name() == 'ENCONTRAR_ERROR'}">
+          <legend>Elegí la línea que tiene el error</legend>
+
+          <div class="opcion" th:each="opcion, estado : ${ejercicio.opciones}">
+            <label>
+              <input
+                type="radio"
+                name="indiceSeleccionado"
+                th:value="${estado.index}"
+                th:checked="${indiceSeleccionado != null
+                               and indiceSeleccionado
+                               == estado.index}"
+                required
+              />
+              <span class="sr-only" th:text="${'Línea ' + estado.count + ': '}">
+                Línea 1:
+              </span>
+              <span aria-hidden="true" th:text="${estado.count + '.'}">1.</span>
+              <code class="linea-codigo" th:text="${opcion}">int x = 1;</code>
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- Tipo ORDENAR: reordenar las líneas con botones Subir y Bajar -->
+        <th:block th:if="${ejercicio.tipo.name() == 'ORDENAR'}">
+          <p id="instrucciones-orden">
+            Ordená las líneas con los botones Subir y Bajar. También podés usar
+            Alt + flecha arriba o abajo sobre una línea.
+          </p>
+
+          <noscript>
+            <p class="aviso">
+              Para reordenar las líneas hace falta activar JavaScript.
+            </p>
+          </noscript>
+
+          <ol
+            id="lista-orden"
+            class="lista-orden"
+            aria-describedby="instrucciones-orden"
+          >
+            <li th:each="linea, estado : ${lineas}">
+              <input
+                type="hidden"
+                name="ordenSeleccionado"
+                th:value="${linea.indice}"
+              />
+              <span class="numero" aria-hidden="true" th:text="${estado.count + '.'}">1.</span>
+              <code class="linea-codigo" th:text="${linea.texto}">int x = 1;</code>
+              <span class="controles">
+                <button
+                  type="button"
+                  data-accion="subir"
+                  th:aria-label="${'Subir la línea ' + linea.texto}"
+                >
+                  Subir
+                </button>
+                <button
+                  type="button"
+                  data-accion="bajar"
+                  th:aria-label="${'Bajar la línea ' + linea.texto}"
+                >
+                  Bajar
+                </button>
+              </span>
+            </li>
+          </ol>
+
+          <p id="anuncio-orden" class="sr-only" role="status" aria-live="polite"></p>
+        </th:block>
 
         <button class="boton-responder" type="submit">Enviar respuesta</button>
       </form>
 
       <section
+        id="resultado"
+        tabindex="-1"
         class="resultado correcta"
         th:if="${resultado != null
                      and resultado.correcta}"
@@ -240,11 +169,13 @@ Código del ejercicio</pre
       </section>
 
       <section
+        id="resultado"
+        tabindex="-1"
         class="resultado incorrecta"
         th:if="${resultado != null
                      and !resultado.correcta}"
       >
-        <h2>Respuesta incorrecta</h2>
+        <h2>Todavía no es correcta</h2>
 
         <p th:if="${resultado.categoriaError != null}">
           Categoría del error:
@@ -266,6 +197,8 @@ Código del ejercicio</pre
             Pista para resolver el ejercicio.
           </strong>
         </p>
+
+        <p>Equivocarse es parte de aprender: podés volver a intentarlo.</p>
       </section>
 
       <div class="acciones-resultado" th:if="${resultado != null}">

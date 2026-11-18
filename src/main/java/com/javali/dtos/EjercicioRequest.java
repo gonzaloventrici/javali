@@ -23,5 +23,23 @@ public record EjercicioRequest(
         @Min(1)
         int orden,
         List<String> opciones,
-        Integer indiceCorrecto) {}
+        Integer indiceCorrecto,
+        List<Integer> ordenCorrecto) {
+
+    // Constructor para ejercicios que no son de tipo ORDENAR.
+    public EjercicioRequest(
+            TipoEjercicio tipo,
+            String enunciado,
+            String codigo,
+            String explicacion,
+            String pista,
+            int orden,
+            List<String> opciones,
+            Integer indiceCorrecto) {
+        this(tipo, enunciado, codigo, explicacion, pista,
+                orden, opciones, indiceCorrecto, null);
+    }
+}
 // Recibe y valida los datos necesarios para crear un ejercicio.
+// OPCIONES y ENCONTRAR_ERROR usan indiceCorrecto;
+// ORDENAR usa ordenCorrecto (índices de las opciones en el orden correcto).

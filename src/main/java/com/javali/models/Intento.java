@@ -29,8 +29,12 @@ public class Intento {
     @JoinColumn(name = "ejercicio_id")
     private Ejercicio ejercicio;
 
-    @Column(nullable = false)
+    // Es nulo en los ejercicios de tipo ORDENAR.
     private Integer indiceSeleccionado;
+
+    // Solo para ORDENAR: secuencia elegida, por ejemplo "2,0,1".
+    @Column(length = 200)
+    private String ordenSeleccionado;
 
     @Column(nullable = false)
     private boolean correcta;
@@ -51,6 +55,8 @@ public class Intento {
     public void setEjercicio(Ejercicio ejercicio) {this.ejercicio = ejercicio;}
     public Integer getIndiceSeleccionado() {return indiceSeleccionado;}
     public void setIndiceSeleccionado(Integer indiceSeleccionado) {this.indiceSeleccionado = indiceSeleccionado;}
+    public String getOrdenSeleccionado() {return ordenSeleccionado;}
+    public void setOrdenSeleccionado(String ordenSeleccionado) {this.ordenSeleccionado = ordenSeleccionado;}
     public boolean isCorrecta() {return correcta;}
     public void setCorrecta(boolean correcta) {this.correcta = correcta;}
     public CategoriaError getCategoriaError() {return categoriaError;}

@@ -1,5 +1,11 @@
 <!doctype html>
-<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  th:data-tamano="${preferencias?.tamanoLetra}"
+  th:data-contraste="${preferencias?.contraste}"
+  th:data-tipografia="${preferencias?.tipografia}"
+>
   <head>
     <meta charset="UTF-8" />
 
@@ -7,111 +13,14 @@
 
     <title>Javali</title>
 
-    <style>
-      body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #f4f6f8;
-        color: #1f2937;
-      }
-
-      header {
-        background: #17324d;
-        color: white;
-        padding: 18px 28px;
-      }
-
-      nav {
-        display: flex;
-        gap: 18px;
-        align-items: center;
-      }
-
-      nav strong {
-        margin-right: 8px;
-      }
-
-      nav a {
-        color: white;
-        text-decoration: none;
-      }
-
-      nav a:hover {
-        text-decoration: underline;
-      }
-
-      nav span {
-        margin-left: auto;
-      }
-
-      .form-logout {
-        margin: 0;
-      }
-
-      .form-logout button {
-        width: auto;
-        margin: 0;
-        padding: 8px 12px;
-        border: none;
-        border-radius: 6px;
-        background: #087e8b;
-        color: white;
-        cursor: pointer;
-      }
-
-      .form-logout button:hover {
-        background: #066975;
-      }
-
-      main {
-        max-width: 900px;
-        margin: 48px auto;
-        padding: 32px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
-      }
-
-      h1 {
-        margin-top: 0;
-        color: #17324d;
-      }
-
-      .boton {
-        display: inline-block;
-        margin-top: 16px;
-        padding: 12px 18px;
-        border-radius: 8px;
-        background: #087e8b;
-        color: white;
-        text-decoration: none;
-      }
-
-      .boton:hover {
-        background: #066975;
-        text-decoration: none;
-      }
-
-      .usuario {
-        margin-top: 20px;
-        padding: 14px;
-        background: #e8f4f5;
-        border-radius: 8px;
-      }
-
-      .acciones {
-        display: flex;
-        gap: 12px;
-        align-items: center;
-        flex-wrap: wrap;
-      }
-    </style>
+    <link rel="stylesheet" th:href="@{/css/javali.css}" />
+    <script th:src="@{/js/javali.js}" defer></script>
   </head>
 
   <body>
     <div th:replace="~{fragments/menu :: menu}"></div>
 
-    <main>
+    <main id="contenido">
       <h1>Aprendé Java con Javali</h1>
 
       <p>

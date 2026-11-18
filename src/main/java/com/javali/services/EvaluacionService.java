@@ -29,5 +29,8 @@ public interface EvaluacionService {
             NivelElegidoRequest request
     ); // Permite aceptar o cambiar el nivel recomendado.
     List<EvaluacionResponse> listarPorUsuario(Long usuarioId);
+
+    boolean tieneEvaluacionCompleta(Long usuarioId);
+    // Indica si el usuario ya terminó la evaluación inicial y eligió su nivel.
 }
 // Define las operaciones necesarias para realizar una evaluación.

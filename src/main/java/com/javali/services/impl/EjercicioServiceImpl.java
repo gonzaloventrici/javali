@@ -21,6 +21,10 @@ import com.javali.models.Usuario;
 import com.javali.repositories.IntentoRepository;
 import com.javali.repositories.UsuarioRepository;
 import com.javali.services.ProgresoService;
+import com.javali.models.CategoriaError;
+import com.javali.models.TipoEjercicio;
+import com.javali.utils.OrdenUtils;
+import com.javali.validators.EjercicioValidator;
 import com.javali.exceptions.RecursoConDependenciasException;
 
 
@@ -40,6 +44,7 @@ public class EjercicioServiceImpl implements EjercicioService {
     private final UsuarioRepository usuarioRepository;
     private final IntentoRepository intentoRepository;
     private final ProgresoService progresoService;
+    private final EjercicioValidator ejercicioValidator;
     // Permiten buscar al usuario y guardar su intento.
 
 
@@ -49,7 +54,8 @@ public class EjercicioServiceImpl implements EjercicioService {
         RetroalimentacionOpcionRepository retroalimentacionRepository,
         UsuarioRepository usuarioRepository,
         IntentoRepository intentoRepository,
-        ProgresoService progresoService) {
+        ProgresoService progresoService,
+        EjercicioValidator ejercicioValidator) {
 
         this.ejercicioRepository = ejercicioRepository;
         this.leccionRepository = leccionRepository;
@@ -57,6 +63,7 @@ public class EjercicioServiceImpl implements EjercicioService {
         this.usuarioRepository = usuarioRepository;
         this.intentoRepository = intentoRepository;
         this.progresoService = progresoService;
+        this.ejercicioValidator = ejercicioValidator;
         }
 
         // Recibe todos los repositorios mediante inyección por constructor.
@@ -98,9 +105,11 @@ public class EjercicioServiceImpl implements EjercicioService {
                         () -> new LeccionNoEncontradaException(leccionId)
                 );
 
-        validarIndiceCorrecto(
+        ejercicioValidator.validarEjercicio(
+                request.tipo(),
+                request.opciones(),
                 request.indiceCorrecto(),
-                request.opciones()
+                request.ordenCorrecto()
         );
 
         Ejercicio ejercicio = new Ejercicio();
@@ -125,9 +134,7 @@ public class EjercicioServiceImpl implements EjercicioService {
         ejercicio.setOpciones(
                 new ArrayList<>(request.opciones())
         );
-        ejercicio.setIndiceCorrecto(
-                request.indiceCorrecto()
-        );
+        asignarRespuestaCorrecta(ejercicio, request);
         return aRespuesta(
                 ejercicioRepository.save(ejercicio)
         );
@@ -152,14 +159,29 @@ public class EjercicioServiceImpl implements EjercicioService {
                         )
                 );
 
-        boolean correcta = Objects.equals(
-                ejercicio.getIndiceCorrecto(),
-                respuesta.indiceSeleccionado()
+        boolean esOrdenar =
+                ejercicio.getTipo() == TipoEjercicio.ORDENAR;
+
+        ejercicioValidator.validarRespuesta(
+                ejercicio.getTipo(),
+                ejercicio.getOpciones().size(),
+                respuesta.indiceSeleccionado(),
+                respuesta.ordenSeleccionado()
         );
+
+        boolean correcta = esOrdenar
+                ? Objects.equals(
+                        ejercicio.getOrdenCorrecto(),
+                        respuesta.ordenSeleccionado()
+                )
+                : Objects.equals(
+                        ejercicio.getIndiceCorrecto(),
+                        respuesta.indiceSeleccionado()
+                );
 
         RetroalimentacionOpcion retroalimentacion = null;
 
-        if (!correcta) {
+        if (!correcta && !esOrdenar) {
                 retroalimentacion = retroalimentacionRepository
                         .findByEjercicio_IdAndIndiceOpcion(
                                 id,
@@ -173,14 +195,19 @@ public class EjercicioServiceImpl implements EjercicioService {
         intento.setUsuario(usuario);
         intento.setEjercicio(ejercicio);
         intento.setIndiceSeleccionado(
-                respuesta.indiceSeleccionado()
+                esOrdenar ? null : respuesta.indiceSeleccionado()
+        );
+        intento.setOrdenSeleccionado(
+                esOrdenar
+                        ? OrdenUtils.aTexto(respuesta.ordenSeleccionado())
+                        : null
         );
         intento.setCorrecta(correcta);
-        intento.setCategoriaError(
-                retroalimentacion == null
-                        ? null
-                        : retroalimentacion.getCategoriaError()
-        );
+        // Un orden incorrecto se considera un error de lógica.
+        CategoriaError categoriaError = retroalimentacion == null
+                ? (esOrdenar && !correcta ? CategoriaError.LOGICA : null)
+                : retroalimentacion.getCategoriaError();
+        intento.setCategoriaError(categoriaError);
         intento.setFecha(LocalDateTime.now());
 
         intentoRepository.save(intento);
@@ -203,7 +230,7 @@ public class EjercicioServiceImpl implements EjercicioService {
         if (retroalimentacion == null) {
                 return new ResultadoCorreccionDTO(
                         false,
-                        null,
+                        categoriaError,
                         ejercicio.getExplicacion(),
                         ejercicio.getPista()
                 );
@@ -243,9 +270,11 @@ public class EjercicioServiceImpl implements EjercicioService {
                 Long id,
                 EjercicioRequest request) {
         Ejercicio ejercicio = buscarEjercicio(id);
-        validarIndiceCorrecto(
+        ejercicioValidator.validarEjercicio(
+                request.tipo(),
+                request.opciones(),
                 request.indiceCorrecto(),
-                request.opciones()
+                request.ordenCorrecto()
         );
         ejercicio.setTipo(request.tipo());
         ejercicio.setEnunciado(request.enunciado().trim());
@@ -267,9 +296,7 @@ public class EjercicioServiceImpl implements EjercicioService {
         ejercicio.getOpciones().addAll(
                 request.opciones()
         );
-        ejercicio.setIndiceCorrecto(
-                request.indiceCorrecto()
-        );
+        asignarRespuestaCorrecta(ejercicio, request);
         return aRespuesta(ejercicio);
         }
         // Modifica el ejercicio sin cambiar la lección a la que pertenece.
@@ -300,21 +327,18 @@ public class EjercicioServiceImpl implements EjercicioService {
                 }
                 // Busca un ejercicio o informa que no existe.
         
-        private void validarIndiceCorrecto(
-                Integer indiceCorrecto,
-                List<String> opciones) {
-        if (opciones == null || opciones.size() < 2) {
-                throw new IllegalArgumentException(
-                        "El ejercicio debe contener al menos dos opciones"
+        private void asignarRespuestaCorrecta(
+                Ejercicio ejercicio,
+                EjercicioRequest request) {
+        if (request.tipo() == TipoEjercicio.ORDENAR) {
+                ejercicio.setIndiceCorrecto(null);
+                ejercicio.setOrdenCorrecto(
+                        new ArrayList<>(request.ordenCorrecto())
                 );
-                }
-        if (indiceCorrecto == null
-                || indiceCorrecto < 0
-                || indiceCorrecto >= opciones.size()) {
-                throw new IllegalArgumentException(
-                        "El índice correcto debe corresponder a una opción existente"
-                );
-                }
+        } else {
+                ejercicio.setIndiceCorrecto(request.indiceCorrecto());
+                ejercicio.setOrdenCorrecto(new ArrayList<>());
         }
-        // Comprueba que la respuesta correcta exista entre las opciones.
+        }
+        // Guarda la respuesta correcta según el tipo de ejercicio.
 }
