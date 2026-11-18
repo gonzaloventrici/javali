@@ -44,6 +44,13 @@ public class Ejercicio {
 
     private Integer indiceCorrecto;
 
+    // Solo para ORDENAR: índices de las opciones en el orden correcto.
+    @ElementCollection
+    @CollectionTable(name = "ejercicio_orden_correcto", joinColumns = @JoinColumn(name = "ejercicio_id"))
+    @OrderColumn(name = "posicion")
+    @Column(name = "indice_opcion", nullable = false)
+    private List<Integer> ordenCorrecto = new ArrayList<>();
+
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public Leccion getLeccion() { return leccion; }
@@ -64,4 +71,6 @@ public class Ejercicio {
     public void setOpciones(List<String> opciones) { this.opciones = opciones; }
     public Integer getIndiceCorrecto() { return indiceCorrecto; }
     public void setIndiceCorrecto(Integer indiceCorrecto) { this.indiceCorrecto = indiceCorrecto; }
+    public List<Integer> getOrdenCorrecto() { return ordenCorrecto; }
+    public void setOrdenCorrecto(List<Integer> ordenCorrecto) { this.ordenCorrecto = ordenCorrecto; }
 }

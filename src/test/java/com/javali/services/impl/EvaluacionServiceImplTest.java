@@ -222,4 +222,115 @@ class EvaluacionServiceImplTest {
 
         return pregunta;
     } // Crea una pregunta mínima reutilizable para las pruebas.
+
+    // ---------- Puntaje ponderado por dificultad ----------
+
+    private EvaluacionResponse finalizarConResultados(
+            List<Pregunta> preguntas,
+            java.util.Set<Long> correctas) {
+
+        Usuario usuario = new Usuario();
+        usuario.setId(1L);
+
+        Evaluacion evaluacion = new Evaluacion();
+        evaluacion.setId(1L);
+        evaluacion.setUsuario(usuario);
+        evaluacion.setFinalizada(false);
+        evaluacion.setNivelRecomendado(NivelCurso.INICIAL);
+
+        List<RespuestaPreguntaDTO> respuestas = preguntas.stream()
+                .map(pregunta -> new RespuestaPreguntaDTO(
+                        pregunta.getId(),
+                        correctas.contains(pregunta.getId()) ? 1 : 0))
+                .toList();
+
+        when(evaluacionRepository.findById(1L))
+                .thenReturn(Optional.of(evaluacion));
+        when(preguntaRepository.findByEvaluacion_IdOrderByOrdenAsc(1L))
+                .thenReturn(preguntas);
+        when(evaluacionRepository.save(evaluacion))
+                .thenReturn(evaluacion);
+
+        return evaluacionService.finalizar(
+                1L,
+                new FinalizarEvaluacionRequest(respuestas)
+        );
+    } // Responde cada pregunta bien (opción 1) o mal (opción 0).
+
+    private Pregunta crearPreguntaConDificultad(Long id, int dificultad) {
+        Pregunta pregunta = crearPregunta(id, null, 1);
+        pregunta.setDificultad(dificultad);
+        return pregunta;
+    } // Pregunta cuya respuesta correcta es la opción 1.
+
+    private List<Pregunta> bancoDeOchoPreguntas() {
+        java.util.List<Pregunta> preguntas = new java.util.ArrayList<>();
+        preguntas.add(crearPreguntaConDificultad(1L, 1));
+        for (long id = 2; id <= 7; id++) {
+            preguntas.add(crearPreguntaConDificultad(id, 2));
+        }
+        preguntas.add(crearPreguntaConDificultad(8L, 3));
+        return preguntas;
+    } // 1 básica, 6 intermedias y 1 avanzada: 16 puntos en total.
+
+    @Test
+    void lasPreguntasDificilesPesanMasEnElPuntaje() {
+        EvaluacionResponse resultado = finalizarConResultados(
+                List.of(
+                        crearPreguntaConDificultad(1L, 1),
+                        crearPreguntaConDificultad(2L, 2),
+                        crearPreguntaConDificultad(3L, 3)),
+                java.util.Set.of(1L, 2L)
+        );
+
+        assertEquals(2, resultado.respuestasCorrectas());
+        assertEquals(3, resultado.totalPreguntas());
+        assertEquals(50.0, resultado.porcentaje()); // 3 de 6 puntos
+        assertEquals(NivelCurso.INTERMEDIO, resultado.nivelRecomendado());
+    } // Acertar 2 de 3 no es 66%: la pregunta que falló valía 3 puntos.
+
+    @Test
+    void sinResolverLasAvanzadasNoSeRecomiendaNivelAvanzado() {
+        // Acierta todo menos la avanzada: 13 de 16 puntos (81%).
+        EvaluacionResponse resultado = finalizarConResultados(
+                bancoDeOchoPreguntas(),
+                java.util.Set.of(1L, 2L, 3L, 4L, 5L, 6L, 7L)
+        );
+
+        assertEquals(NivelCurso.INTERMEDIO, resultado.nivelRecomendado());
+    } // El puntaje alto no alcanza si falló las preguntas más difíciles.
+
+    @Test
+    void resolviendoLasAvanzadasSeRecomiendaNivelAvanzado() {
+        EvaluacionResponse resultado = finalizarConResultados(
+                bancoDeOchoPreguntas(),
+                java.util.Set.of(1L, 2L, 3L, 4L, 5L, 6L, 7L, 8L)
+        );
+
+        assertEquals(100.0, resultado.porcentaje());
+        assertEquals(NivelCurso.AVANZADO, resultado.nivelRecomendado());
+    }
+
+    @Test
+    void conPuntajeBajoSeRecomiendaNivelInicial() {
+        EvaluacionResponse resultado = finalizarConResultados(
+                List.of(
+                        crearPreguntaConDificultad(1L, 1),
+                        crearPreguntaConDificultad(2L, 2),
+                        crearPreguntaConDificultad(3L, 3)),
+                java.util.Set.of(1L)
+        );
+
+        assertEquals(NivelCurso.INICIAL, resultado.nivelRecomendado());
+    } // 1 de 6 puntos (16%) corresponde al nivel inicial.
+
+    @Test
+    void tieneEvaluacionCompletaConsultaAlRepositorio() {
+        when(evaluacionRepository
+                .existsByUsuario_IdAndFinalizadaTrueAndNivelElegidoNotNull(7L))
+                .thenReturn(true);
+
+        assertEquals(true, evaluacionService.tieneEvaluacionCompleta(7L));
+        assertEquals(false, evaluacionService.tieneEvaluacionCompleta(8L));
+    } // Una evaluación completa es una finalizada con nivel elegido.
 }

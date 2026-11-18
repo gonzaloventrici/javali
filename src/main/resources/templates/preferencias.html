@@ -1,0 +1,104 @@
+<!doctype html>
+<html
+  lang="es"
+  xmlns:th="http://www.thymeleaf.org"
+  th:data-tamano="${preferencias?.tamanoLetra}"
+  th:data-contraste="${preferencias?.contraste}"
+  th:data-tipografia="${preferencias?.tipografia}"
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Accesibilidad | Javali</title>
+    <link rel="stylesheet" th:href="@{/css/javali.css}" />
+    <script th:src="@{/js/javali.js}" defer></script>
+  </head>
+
+  <body>
+    <div th:replace="~{fragments/menu :: menu}"></div>
+
+    <main id="contenido">
+      <h1>Accesibilidad y práctica</h1>
+
+      <p>
+        Elegí cómo querés ver Javali. Los cambios se guardan en tu cuenta y se
+        aplican en todas las pantallas.
+      </p>
+
+      <p class="aviso-ok" role="status" th:if="${guardado != null}">
+        Tus ajustes se guardaron.
+      </p>
+
+      <form th:action="@{/web/preferencias}" method="post">
+        <fieldset>
+          <legend>Tamaño de letra</legend>
+
+          <div class="opcion" th:each="tamano : ${tamanos}">
+            <label>
+              <input
+                type="radio"
+                name="tamanoLetra"
+                th:value="${tamano}"
+                th:checked="${formulario.tamanoLetra == tamano}"
+              />
+              <span th:text="${tamano.etiqueta}">Normal</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Contraste</legend>
+
+          <div class="opcion" th:each="contraste : ${contrastes}">
+            <label>
+              <input
+                type="radio"
+                name="contraste"
+                th:value="${contraste}"
+                th:checked="${formulario.contraste == contraste}"
+              />
+              <span th:text="${contraste.etiqueta}">Normal</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Tipografía</legend>
+
+          <div class="opcion" th:each="tipografia : ${tipografias}">
+            <label>
+              <input
+                type="radio"
+                name="tipografia"
+                th:value="${tipografia}"
+                th:checked="${formulario.tipografia == tipografia}"
+              />
+              <span th:text="${tipografia.etiqueta}">Predeterminada</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Racha de práctica</legend>
+
+          <div class="opcion">
+            <label>
+              <input
+                type="checkbox"
+                name="mostrarRacha"
+                value="true"
+                th:checked="${formulario.mostrarRacha}"
+              />
+              <span>
+                Mostrar mis días seguidos de práctica. Es solo un motivador: no
+                hay vidas, penalizaciones ni rankings.
+              </span>
+            </label>
+          </div>
+        </fieldset>
+
+        <button class="boton-responder" type="submit">Guardar ajustes</button>
+      </form>
+    </main>
+  </body>
+</html>

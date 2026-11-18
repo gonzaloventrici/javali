@@ -5,7 +5,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface IntentoRepository extends JpaRepository<Intento, Long> {
+public interface IntentoRepository
+        extends JpaRepository<Intento, Long>, IntentoRepositoryCustom {
 
     List<Intento> findByUsuario_IdOrderByFechaDesc(Long usuarioId);
     // Devuelve todos los intentos del usuario, del más reciente al más antiguo.
