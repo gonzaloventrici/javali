@@ -45,8 +45,8 @@ class WebControllerTest {
     private MockMvc mockMvc;
 
     private final UsernamePasswordAuthenticationToken autenticacion =
-            new UsernamePasswordAuthenticationToken(
-                    "estudiante@javali.com", "x");
+        new UsernamePasswordAuthenticationToken(
+                "estudiante@javali.com", "x", List.of());
 
     @BeforeEach
     void preparar() {
