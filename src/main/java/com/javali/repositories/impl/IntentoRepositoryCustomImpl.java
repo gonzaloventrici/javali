@@ -25,7 +25,7 @@ public class IntentoRepositoryCustomImpl implements IntentoRepositoryCustom {
                 .setParameter("usuarioId", usuarioId)
                 .getResultList();
         return fechas.stream()
-                .map(LocalDateTime::toLocalDate)
+                .map(fecha -> fecha.toLocalDate())
                 .distinct()
                 .sorted()
                 .toList();
