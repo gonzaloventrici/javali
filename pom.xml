@@ -63,6 +63,11 @@
 		
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
+		</dependency> <!-- Valida tokens JWT y permite firmarlos con Nimbus. -->
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-thymeleaf</artifactId>
 		</dependency> <!-- Permite renderizar páginas HTML desde Spring MVC. -->
 		

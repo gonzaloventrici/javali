@@ -23,20 +23,19 @@ El sistema permite:
 ## Tecnologías utilizadas
 
 - Java 21
-- Spring Boot
+- Spring Boot 4
 - Spring MVC
-- Spring Security
+- Spring Security con autenticación JWT para la API (OAuth2 Resource Server y Nimbus)
 - Spring Data JPA
 - Hibernate
 - Jakarta Validation
 - Thymeleaf
 - Maven Wrapper
-- SQL Server para el perfil local
-- H2 en memoria para el perfil demo
-- JUnit 5
-- Mockito
-- MockMvc
-- JaCoCo
+- **SQL Server** como base de datos por defecto
+- H2 en memoria para el perfil `demo` y las pruebas de contexto
+- JUnit 5, Mockito y MockMvc para las pruebas unitarias
+- JaCoCo para la cobertura
+- **pytest** y `requests` para las pruebas de la API por HTTP
 - Postman para Visual Studio Code
 
 ## Arquitectura
@@ -44,54 +43,59 @@ El sistema permite:
 El proyecto utiliza una arquitectura en capas:
 
 ```text
-src/main/java/com/javali/
-├── config/              Configuración, seguridad y datos demo
-├── controllers/         Endpoints REST
-│   └── web/             Navegación web y vistas Thymeleaf
-├── dtos/                Contratos de entrada y salida
-├── exceptions/          Excepciones del dominio
-├── models/              Entidades y enumeraciones
-├── repositories/        Acceso a datos con Spring Data JPA
-│   └── impl/            Implementaciones personalizadas de repositorios
-├── services/            Interfaces de casos de uso
-│   └── impl/            Implementación de reglas de negocio
-├── utils/               Funciones auxiliares sin estado (orden de líneas, racha)
-├── validators/          Reglas de validación propias
-└── JavaliApplication.java
-
-src/main/resources/
-├── templates/           Vistas Thymeleaf
-└── static/
-    ├── css/javali.css   Hoja de estilos común con los ajustes de accesibilidad
-    └── js/javali.js     Reordenar líneas con teclado y foco en el resultado
+javali/
+├── src/main/java/com/javali/
+│   ├── config/              Configuración, seguridad (JWT y sesión) y datos demo
+│   ├── controllers/         Endpoints REST (incluye AuthController)
+│   │   └── web/             Navegación web y vistas Thymeleaf
+│   ├── dtos/                Contratos de entrada y salida
+│   ├── exceptions/          Excepciones del dominio
+│   ├── models/              Entidades y enumeraciones
+│   ├── repositories/        Acceso a datos con Spring Data JPA
+│   │   └── impl/            Implementaciones personalizadas de repositorios
+│   ├── security/            Usuarios para Spring Security y autorización por usuario
+│   ├── services/            Interfaces de casos de uso
+│   │   └── impl/            Implementación de reglas de negocio
+│   ├── utils/               Funciones auxiliares sin estado (orden de líneas, racha)
+│   ├── validators/          Reglas de validación propias
+│   └── JavaliApplication.java
+├── src/main/resources/
+│   ├── templates/           Vistas Thymeleaf
+│   ├── static/              Estilos (accesibilidad) y JavaScript de la interfaz
+│   ├── application.properties
+│   ├── application-sqlserver.properties
+│   └── application-demo.properties
+├── src/test/                Pruebas unitarias (JUnit, Mockito, MockMvc)
+├── pytest_api/              Pruebas de la API REST por HTTP (pytest)
+└── postman/                 Colecciones para cargar contenidos
 ```
 
 ### Responsabilidades principales
 
-| Capa | Responsabilidad |
-|---|---|
-| `controllers` | Recibir solicitudes REST, validar DTO y devolver respuestas HTTP. |
-| `controllers.web` | Atender navegación HTML, formularios, sesión, `Model` y plantillas Thymeleaf. |
-| `services` | Declarar los contratos de los casos de uso. |
-| `services.impl` | Aplicar reglas de negocio, transacciones, correcciones y cálculos. |
-| `repositories` | Consultar y persistir información mediante Spring Data JPA. |
+| Capa                | Responsabilidad                                                                                                    |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `controllers`       | Recibir solicitudes REST, validar DTO y devolver respuestas HTTP.                                                  |
+| `controllers.web`   | Atender navegación HTML, formularios, sesión, `Model` y plantillas Thymeleaf.                                      |
+| `services`          | Declarar los contratos de los casos de uso.                                                                        |
+| `services.impl`     | Aplicar reglas de negocio, transacciones, correcciones, cálculos y emisión de tokens JWT.                          |
+| `repositories`      | Consultar y persistir información mediante Spring Data JPA.                                                        |
 | `repositories.impl` | Consultas personalizadas: `IntentoRepositoryCustomImpl` obtiene solo los días con práctica para calcular la racha. |
-| `models` | Representar entidades, relaciones y estado del dominio. |
-| `dtos` | Transportar datos sin exponer directamente las entidades. |
-| `config` | Configurar seguridad, perfiles de ejecución y datos iniciales. |
-| `validators` | `EjercicioValidator` valida cada tipo de ejercicio y sus respuestas; `@PasswordSegura` exige letras y números. |
-| `utils` | `OrdenUtils` y `RachaUtils`: cálculos puros y fáciles de probar. |
+| `models`            | Representar entidades, relaciones y estado del dominio.                                                            |
+| `dtos`              | Transportar datos sin exponer directamente las entidades.                                                          |
+| `config`            | Configurar seguridad, perfiles de ejecución y datos iniciales.                                                     |
+| `security`          | Cargar usuarios para la autenticación y decidir si un usuario puede acceder a datos de otro.                       |
+| `validators`        | `EjercicioValidator` valida cada tipo de ejercicio y sus respuestas; `@PasswordSegura` exige letras y números.     |
+| `utils`             | `OrdenUtils` y `RachaUtils`: cálculos puros y fáciles de probar.                                                   |
 
 ## Requisitos
 
-Para ejecutar el perfil de demostración se necesita:
-
 - Java 21
 - Git
-- Visual Studio Code
-- Extensión oficial de Postman para Visual Studio Code
+- SQL Server (por ejemplo, la edición Express) y SQL Server Management Studio, para el modo normal
+- Python 3.11 o superior, solo para las pruebas con pytest
+- Visual Studio Code y la extensión oficial de Postman, para cargar contenidos
 
-No es necesario instalar Maven porque el repositorio incluye Maven Wrapper.
+No es necesario instalar Maven porque el repositorio incluye Maven Wrapper. Si no se quiere instalar SQL Server, se puede usar el perfil `demo` con H2.
 
 ## Clonar y abrir el proyecto
 
@@ -107,23 +111,55 @@ Comprobar que la terminal esté ubicada en la carpeta que contiene `pom.xml`:
 Test-Path .\pom.xml
 ```
 
-Resultado esperado:
+Resultado esperado: `True`.
 
-```text
-True
+## Configurar SQL Server
+
+1. En SQL Server Management Studio, conectarse con **Windows Authentication** y crear la base:
+
+```sql
+CREATE DATABASE javali;
 ```
 
-## Ejecutar las pruebas
+2. Habilitar el inicio de sesión `sa` con una contraseña propia:
+
+```sql
+ALTER LOGIN sa ENABLE;
+ALTER LOGIN sa WITH PASSWORD = 'UnaClave#Segura1';
+```
+
+3. Activar el modo mixto: clic derecho en el servidor → _Properties_ → _Security_ → **SQL Server and Windows Authentication mode**, y reiniciar el servicio.
+4. Si la instancia es Express, habilitar **TCP/IP** con el puerto fijo `1433` desde _SQL Server Configuration Manager_ y reiniciar el servicio.
+
+### Variables de entorno
+
+La conexión se configura en `src/main/resources/application-sqlserver.properties` con variables de entorno. Solo `DB_PASSWORD` es obligatoria; el resto tiene un valor por defecto.
+
+| Variable                 | Valor por defecto   | Descripción                                          |
+| ------------------------ | ------------------- | ---------------------------------------------------- |
+| `DB_PASSWORD`            | —                   | Contraseña del usuario de la base.                   |
+| `DB_USER`                | `sa`                | Usuario de la base.                                  |
+| `DB_NAME`                | `javali`            | Nombre de la base.                                   |
+| `DB_HOST`                | `localhost`         | Servidor.                                            |
+| `DB_PORT`                | `1433`              | Puerto.                                              |
+| `JWT_SECRET`             | valor de desarrollo | Clave para firmar los tokens (mínimo 32 caracteres). |
+| `JWT_EXPIRACION_MINUTOS` | `60`                | Duración del token.                                  |
+
+En PowerShell, definir la contraseña en la misma ventana donde se inicia la aplicación:
+
+```powershell
+$env:DB_PASSWORD='tu_contraseña_real'
+```
+
+También se puede copiar `.env.example` a `.env` y completarlo. El archivo `.env` lo lee Visual Studio Code al iniciar con Run/Debug, pero no `mvnw`, y está en `.gitignore` para que las credenciales no se suban al repositorio.
+
+## Ejecutar las pruebas unitarias
 
 ```powershell
 .\mvnw.cmd clean test
 ```
 
-Resultado esperado:
-
-```text
-BUILD SUCCESS
-```
+No requieren SQL Server: el test de contexto usa el perfil `demo` con H2. Resultado esperado: `BUILD SUCCESS`.
 
 El informe de JaCoCo se genera en:
 
@@ -131,59 +167,79 @@ El informe de JaCoCo se genera en:
 target/site/jacoco/index.html
 ```
 
-## Iniciar la aplicación en modo demo
+## Iniciar la aplicación
+
+Con SQL Server (modo por defecto):
 
 ```powershell
+$env:DB_PASSWORD='tu_contraseña_real'
 .\mvnw.cmd spring-boot:run
 ```
 
-Esperar hasta ver:
+Sin SQL Server, con H2 en memoria:
 
-```text
-Started JavaliApplication
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=demo"
 ```
 
-La aplicación queda disponible en:
+Esperar hasta ver `Started JavaliApplication`. La aplicación queda disponible en:
 
 ```text
 http://localhost:8080
 ```
 
-El perfil demo utiliza una base H2 en memoria:
+Hibernate crea las tablas en el primer arranque (`ddl-auto=update`). Con SQL Server los datos persisten entre reinicios; con el perfil `demo` se eliminan al detener la aplicación.
+
+Documentación interactiva de la API (Swagger):
 
 ```text
-jdbc:h2:mem:javali
+http://localhost:8080/swagger-ui/index.html
 ```
-
-Los datos se eliminan al detener la aplicación.
 
 ## Usuarios de demostración
 
-### Administrador
+Se crean en el primer arranque, solo si todavía no existen.
 
-```text
-Email: vebes@javali.com
-Contraseña: vebes123
+| Rol           | Email                   | Contraseña      |
+| ------------- | ----------------------- | --------------- |
+| Administrador | `vebes@javali.com`      | `vebes123`      |
+| Estudiante    | `estudiante@javali.com` | `Estudiante123` |
+
+Las contraseñas se almacenan como hashes BCrypt. En una base nueva, el administrador queda con `id` 1 y el estudiante con `id` 2.
+
+## Autenticación con JWT (API)
+
+La API REST (`/api/**`) no usa sesión: cada pedido lleva un token JWT. Las pantallas web (`/login`, `/web/**`) siguen usando sesión con formulario.
+
+1. Iniciar sesión para obtener el token:
+
+```powershell
+$r = Invoke-RestMethod -Method Post -Uri http://localhost:8080/api/auth/login `
+  -ContentType 'application/json' `
+  -Body '{"email":"vebes@javali.com","password":"vebes123"}'
+$r.token
 ```
 
-### Estudiante
+La respuesta incluye `token`, `tipo` (`Bearer`), `expiraEnSegundos`, `usuarioId`, `email` y `rol`.
 
-```text
-Email: estudiante@javali.com
-Contraseña: Estudiante123
+2. Enviar el token en los demás pedidos:
+
+```powershell
+Invoke-RestMethod -Uri http://localhost:8080/api/usuarios/1 `
+  -Headers @{ Authorization = "Bearer $($r.token)" }
 ```
 
-Las contraseñas se almacenan como hashes BCrypt.
+Detalles:
+
+- El token se firma con HS256 e incluye el email del usuario y su rol (`ADMINISTRADOR` o `ESTUDIANTE`).
+- Dura 60 minutos por defecto. Si vence, hay que iniciar sesión de nuevo.
+- Sin token, o con un token inválido, la API responde `401`. Con un token válido pero sin permisos, responde `403`.
+- La autenticación Basic ya no se acepta en la API.
+- Para entregar o publicar el proyecto, definir `JWT_SECRET` con una clave propia de al menos 32 caracteres.
 
 ## Cargar los contenidos desde Postman
 
 Las colecciones y environments se encuentran en:
-
-```text
-postman/
-```
-
-La estructura puede incluir:
 
 ```text
 postman/
@@ -196,20 +252,51 @@ postman/
     └── README.md
 ```
 
+> **Usar `datos-ampliados`.** Esa colección ya inicia sesión con JWT (`01 - Login (JWT)`) y guarda el token en el environment. La carpeta `demo` todavía usa autenticación Basic, que la API ya no acepta.
+
 ### Importar desde Visual Studio Code
 
 1. Iniciar Javali.
 2. Abrir la extensión Postman.
-3. Seleccionar **Import**.
-4. Elegir **Folder**.
-5. Seleccionar `postman/datos-ampliados` o `postman/demo`.
-6. Importar la colección y el environment.
-7. Seleccionar el environment correspondiente.
-8. Ejecutar primero `00 - Verificar API` o `01 - Verificar API`.
-9. Confirmar que la respuesta sea `200 OK`.
-10. Ejecutar **Run folder** sobre la carpeta de carga.
+3. Seleccionar **Import** → **Folder**.
+4. Elegir `postman/datos-ampliados`.
+5. Seleccionar el environment `Javali Datos Ampliados`.
+6. Ejecutar **Run folder** sobre `Carga ampliada completa`.
+7. Abrir `http://localhost:8080/web/cursos` para ver el contenido.
 
-> Ejecutar una sola colección y una sola vez por inicio de H2. Si se ejecuta nuevamente sin reiniciar, se pueden duplicar los contenidos.
+La carga crea 3 cursos, 6 unidades, 12 lecciones y 24 ejercicios con su retroalimentación.
+
+> Ejecutar la carga **una sola vez por base de datos**. Con SQL Server los datos persisten, así que repetirla duplica los contenidos.
+
+## Pruebas de la API con pytest
+
+La carpeta `pytest_api/` contiene 45 pruebas que verifican la API REST por HTTP contra la aplicación en ejecución: login con JWT, permisos por rol, cursos, contenido, respuestas y progreso. Complementan las pruebas JUnit de `src/test`.
+
+Preparación (una sola vez):
+
+```powershell
+cd pytest_api
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
+
+Ejecución, con Javali corriendo en otra terminal:
+
+```powershell
+pytest
+```
+
+Para correr un solo archivo: `pytest test_auth.py`. Por defecto usan `http://localhost:8080` y el administrador del demo; se pueden cambiar con las variables `JAVALI_BASE_URL`, `JAVALI_ADMIN_EMAIL`, `JAVALI_ADMIN_PASSWORD`, `JAVALI_ESTUDIANTE_EMAIL` y `JAVALI_ESTUDIANTE_PASSWORD`.
+
+| Archivo                       | Qué verifica                                                                      |
+| ----------------------------- | --------------------------------------------------------------------------------- |
+| `test_auth.py`                | Login, tokens inválidos o adulterados, rechazo de Basic y registro.               |
+| `test_cursos.py`              | Alta, consulta, modificación y baja de cursos, y permisos por rol.                |
+| `test_contenido.py`           | Unidades, lecciones y ejercicios, validaciones y respuestas 404.                  |
+| `test_respuestas_progreso.py` | Corrección de respuestas, retroalimentación, progreso, intentos y accesos ajenos. |
+
+Con SQL Server los datos persisten, por lo que las pruebas dejan un mínimo de datos: el estudiante `pytest.estudiante@javali.com` y el curso inactivo `[pytest] Curso de pruebas`, que se crean una sola vez y se reutilizan. Todo lo demás se elimina al terminar.
 
 ## Recorrido recomendado
 
@@ -228,88 +315,52 @@ Registrarse o iniciar sesión
 → Mi progreso
 ```
 
-Cuando una respuesta es incorrecta, el sistema puede informar:
-
-- Categoría del error.
-- Explicación específica.
-- Pista para resolverlo.
-
-Las categorías disponibles son:
-
-```text
-SINTAXIS
-COMPILACION
-LOGICA
-CONCEPTO
-```
+Cuando una respuesta es incorrecta, el sistema puede informar la categoría del error, una explicación específica y una pista para resolverlo. Las categorías disponibles son `SINTAXIS`, `COMPILACION`, `LOGICA` y `CONCEPTO`.
 
 ### Administrador
 
-El administrador puede utilizar la API para crear y administrar:
-
-- Cursos.
-- Unidades.
-- Lecciones.
-- Ejercicios.
-- Retroalimentaciones.
-- Preguntas de evaluación.
+El administrador puede utilizar la API para crear y administrar cursos, unidades, lecciones, ejercicios, retroalimentaciones y preguntas de evaluación.
 
 ## Evaluación inicial
+
+El banco de preguntas está en `config/BancoPreguntasEvaluacion.java`: 4 básicas, 5 intermedias y 3 avanzadas, algunas con código y una sobre un mensaje real del compilador.
 
 La evaluación diagnóstica:
 
 1. Crea o recupera una evaluación pendiente.
 2. Presenta preguntas de opción múltiple.
 3. Exige responder todas las preguntas.
-4. Calcula el porcentaje de respuestas correctas.
-5. Recomienda un nivel.
-6. Permite confirmar o cambiar el nivel recomendado.
+4. Calcula el puntaje y recomienda un nivel.
+5. Permite confirmar o cambiar el nivel recomendado.
 
-Regla actual:
+Reglas del puntaje:
 
-| Porcentaje | Nivel recomendado |
-|---:|---|
-| Menos de 40% | `INICIAL` |
-| Desde 40% y menos de 70% | `INTERMEDIO` |
-| Desde 70% | `AVANZADO` |
+- Cada pregunta tiene una dificultad de 1 a 3 que funciona como peso: las difíciles valen más.
+- Menos de 40 % del puntaje recomienda `INICIAL` y menos de 70 %, `INTERMEDIO`.
+- Para recomendar `AVANZADO` hace falta, además, resolver al menos la mitad de las preguntas avanzadas.
+- El enlace **Evaluación inicial** del menú desaparece cuando el estudiante termina la evaluación y elige su nivel.
 
 ## Progreso
 
-El progreso se registra por usuario y lección.
-
-La página **Mi progreso** muestra:
+El progreso se registra por usuario y lección. La página **Mi progreso** muestra:
 
 - Intentos realizados.
 - Respuestas correctas.
 - Porcentaje general.
 - Error más frecuente.
-- Recomendación.
-- Fortalezas.
-- Temas pendientes.
+- Recomendación, fortalezas y temas pendientes.
 - Nivel recomendado y nivel elegido.
 - Progreso de cada lección iniciada.
 
-Las lecciones sin intentos no se muestran. Una lección iniciada aparece como:
-
-```text
-Lección en progreso
-```
-
-o:
-
-```text
-Lección completada
-```
-
-La regla actual considera completada una lección cuando alcanza al menos un 80% de respuestas correctas sobre los intentos registrados.
+Las lecciones sin intentos no se muestran. Una lección iniciada aparece como **Lección en progreso** o **Lección completada**. Se considera completada cuando alcanza al menos un 80 % de respuestas correctas sobre los intentos registrados.
 
 ## Tipos de ejercicio
 
-| Tipo | Cómo se resuelve | Datos del ejercicio |
-|---|---|---|
-| `OPCIONES` | Elegir una respuesta. | `opciones` e `indiceCorrecto`. |
-| `ENCONTRAR_ERROR` | Elegir la línea de código que tiene el error. | `opciones` son las líneas e `indiceCorrecto` la que falla. |
-| `ORDENAR` | Ordenar las líneas con botones Subir y Bajar o con Alt + flechas. | `opciones` son las líneas (en cualquier orden) y `ordenCorrecto` los índices en el orden correcto. |
+| Tipo              | Cómo se resuelve                                                  | Datos del ejercicio                                                                                |
+| ----------------- | ----------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `OPCIONES`        | Elegir una respuesta.                                             | `opciones` e `indiceCorrecto`.                                                                     |
+| `ENCONTRAR_ERROR` | Elegir la línea de código que tiene el error.                     | `opciones` son las líneas e `indiceCorrecto` la que falla.                                         |
+| `ORDENAR`         | Ordenar las líneas con botones Subir y Bajar o con Alt + flechas. | `opciones` son las líneas (en cualquier orden) y `ordenCorrecto` los índices en el orden correcto. |
 
 La retroalimentación por opción (`/api/ejercicios/{id}/retroalimentaciones`) funciona en `OPCIONES` y `ENCONTRAR_ERROR`. Un orden incorrecto en `ORDENAR` se registra como error de `LOGICA`. La respuesta correcta nunca se envía al navegador.
 
@@ -324,18 +375,9 @@ Cada estudiante puede elegir en **Accesibilidad** (`/web/preferencias`):
 - Tipografía: predeterminada, legible o amigable con la dislexia (usa fuentes del sistema; si el equipo tiene OpenDyslexic, se aplica).
 - Racha de práctica: se puede desactivar.
 
-Los ajustes se guardan en la tabla `preferencias_usuario` y se aplican en todas las pantallas mediante atributos `data-*` en `<html>` y `static/css/javali.css`. Las pantallas incluyen enlace para saltar al contenido, foco visible, etiquetas para lectores de pantalla y se pueden usar solo con teclado. Para quien no inició sesión se usan los valores predeterminados.
+Los ajustes se guardan en la tabla `preferencias_usuario` y se aplican en todas las pantallas mediante atributos `data-*` en `<html>` y `static/css/javali.css`. Las pantallas incluyen enlace para saltar al contenido, foco visible, etiquetas para lectores de pantalla y se pueden usar solo con teclado.
 
 La racha cuenta días seguidos con al menos un intento; sigue viva si se practicó hoy o ayer. No hay vidas, penalizaciones ni rankings.
-
-## Evaluación inicial
-
-El banco de preguntas está en `config/BancoPreguntasEvaluacion.java`: 4 básicas, 5 intermedias y 3 avanzadas, algunas con código y una sobre un mensaje real del compilador.
-
-- Cada pregunta tiene una dificultad de 1 a 3 que funciona como peso en el puntaje: las difíciles valen más.
-- Menos de 40 % del puntaje recomienda `INICIAL` y menos de 70 %, `INTERMEDIO`.
-- Para recomendar `AVANZADO` hace falta, además, resolver al menos la mitad de las preguntas avanzadas.
-- El enlace **Evaluación inicial** del menú desaparece cuando el estudiante termina la evaluación y elige su nivel.
 
 ## Ruta de aprendizaje
 
@@ -349,102 +391,81 @@ El banco de preguntas está en `config/BancoPreguntasEvaluacion.java`: 4 básica
 
 ## Seguridad
 
-El proyecto utiliza Spring Security para:
+Spring Security usa dos cadenas de filtros:
 
-- Autenticar usuarios mediante sesión HTTP.
-- Proteger rutas y recursos.
-- Diferenciar roles `ADMINISTRADOR` y `ESTUDIANTE`.
-- Restringir operaciones administrativas.
-- Evitar que un usuario modifique evaluaciones ajenas.
-- Codificar contraseñas con BCrypt y exigir contraseñas con letras y números.
-- Proteger los formularios web con CSRF (la API REST `/api/**` queda excluida para poder probarla con Postman).
+| Cadena | Rutas                          | Mecanismo                                              |
+| ------ | ------------------------------ | ------------------------------------------------------ |
+| API    | `/api/**`                      | Sin sesión. Token JWT en `Authorization: Bearer`.      |
+| Web    | `/login`, `/web/**` y el resto | Sesión HTTP con formulario de login y protección CSRF. |
 
-La interfaz no constituye por sí sola un control de seguridad. Los permisos se verifican en el servidor.
+Además:
+
+- Se diferencian los roles `ADMINISTRADOR` y `ESTUDIANTE`, y las operaciones administrativas se restringen por rol.
+- Un estudiante solo accede a sus propios intentos, progreso y respuestas (`@PreAuthorize`); el administrador accede a todos.
+- Las contraseñas se codifican con BCrypt y deben tener letras y números.
+- La clave de firma del JWT (`JWT_SECRET`) y la contraseña de la base se leen de variables de entorno.
+
+La interfaz no constituye por sí sola un control de seguridad: los permisos se verifican en el servidor.
 
 ## Persistencia y perfiles
 
-### Perfil demo
+| Perfil                    | Base de datos | Uso                                                                               |
+| ------------------------- | ------------- | --------------------------------------------------------------------------------- |
+| `sqlserver` (por defecto) | SQL Server    | Uso normal. Los datos persisten.                                                  |
+| `demo`                    | H2 en memoria | Presentación y pruebas sin instalar nada. Los datos se pierden al detener Javali. |
 
-- Utiliza H2 en memoria.
-- No requiere instalar una base de datos.
-- Es adecuado para presentación y pruebas manuales.
-- Pierde sus datos al detener Javali.
-
-### Perfil local
-
-Para utilizar SQL Server:
-
-```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=local"
-```
-
-La configuración privada debe mantenerse en:
-
-```text
-src/main/resources/application-local.properties
-```
-
-Ese archivo no debe versionarse si contiene credenciales reales.
+Para usar H2, iniciar con `-Dspring-boot.run.profiles=demo`. Los usuarios de demostración se cargan en ambos perfiles.
 
 ## API REST
 
-La aplicación expone endpoints para:
+La aplicación expone endpoints para autenticación, usuarios, cursos, unidades, lecciones, ejercicios, retroalimentaciones, evaluaciones, preguntas, intentos y progreso. Los endpoints utilizan DTO de entrada y salida, Bean Validation, `ResponseEntity`, códigos HTTP apropiados y manejo centralizado de errores.
 
-- Usuarios.
-- Cursos.
-- Unidades.
-- Lecciones.
-- Ejercicios.
-- Retroalimentaciones.
-- Evaluaciones.
-- Preguntas.
-- Intentos y progreso.
+| Respuesta | Cuándo                                                                              |
+| --------- | ----------------------------------------------------------------------------------- |
+| `400`     | Datos inválidos.                                                                    |
+| `401`     | Falta el token, es inválido o está vencido; o credenciales incorrectas en el login. |
+| `403`     | El usuario no tiene permiso para la operación.                                      |
+| `404`     | El recurso no existe.                                                               |
+| `409`     | Email repetido o recurso con datos relacionados.                                    |
 
-Los endpoints utilizan:
+## Estrategia de pruebas
 
-- DTO de entrada y salida.
-- Bean Validation.
-- `ResponseEntity`.
-- Códigos HTTP apropiados.
-- Manejo centralizado de errores.
+- **JUnit 5 y Mockito**: reglas de negocio, aislando repositories y dependencias.
+- **MockMvc**: controllers y validaciones.
+- **JaCoCo**: cobertura.
+- **pytest**: contrato de la API completa por HTTP, incluida la seguridad con JWT.
+- **Postman**: carga de contenidos y demostración.
 
-## Pruebas
-
-La estrategia de pruebas incluye:
-
-- JUnit 5 para reglas de negocio.
-- Mockito para aislar repositories y dependencias.
-- Fixtures para construir escenarios reproducibles.
-- MockMvc para controllers, validaciones y seguridad.
-- JaCoCo para medir cobertura.
-- Postman para pruebas manuales y demostración.
-
-Se priorizan los siguientes casos:
-
-- Corrección de ejercicios.
-- Clasificación de errores.
-- Actualización del progreso.
-- Desbloqueo de lecciones.
-- Finalización de evaluaciones.
-- Cálculo del nivel recomendado.
-- Accesos anónimos, de estudiante y de administrador.
+Se priorizan la corrección de ejercicios, la clasificación de errores, la actualización del progreso, el desbloqueo de lecciones, la finalización de evaluaciones, el cálculo del nivel recomendado y los accesos anónimos, de estudiante y de administrador.
 
 ## Reiniciar la demostración
 
-1. Detener Javali:
+Con SQL Server, para volver a un estado limpio:
 
-```text
-Ctrl + C
+1. Detener Javali con `Ctrl + C`.
+2. En SQL Server Management Studio, recrear la base:
+
+```sql
+USE master;
+ALTER DATABASE javali SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+DROP DATABASE javali;
+CREATE DATABASE javali;
 ```
 
-2. Iniciar nuevamente:
+3. Iniciar Javali de nuevo. Se crean las tablas y los usuarios de demostración.
+4. Ejecutar otra vez la carga de `postman/datos-ampliados`.
 
-```powershell
-.\mvnw.cmd spring-boot:run
-```
+Con el perfil `demo` alcanza con detener y volver a iniciar Javali.
 
-3. Seleccionar el environment de Postman.
-4. Ejecutar nuevamente una única carpeta de carga.
+## Problemas frecuentes
+
+| Síntoma                                            | Causa y solución                                                                                                               |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `Login failed for user 'sa'`                       | `DB_PASSWORD` no está definida en esa terminal o es incorrecta, o `sa` está deshabilitado o el servidor no está en modo mixto. |
+| `Unable to determine Dialect`                      | Hibernate no pudo conectarse. Buscar más arriba en el log el error real de conexión.                                           |
+| `The TCP/IP connection to the host ... has failed` | TCP/IP no está habilitado en el puerto 1433. Ver _Configurar SQL Server_.                                                      |
+| La API responde `401` con un usuario correcto      | El token venció o falta el encabezado `Authorization: Bearer ...`.                                                             |
+| pytest indica que Javali no responde               | La aplicación no está iniciada en `localhost:8080`.                                                                            |
 
 ## Documentación adicional
 
@@ -465,25 +486,24 @@ README_PRESENTACION.md
 Funcionalidades principales disponibles:
 
 - Arquitectura en capas.
-- API REST.
-- Interfaz web Thymeleaf.
-- Registro y autenticación.
-- Roles y seguridad.
+- API REST con autenticación JWT.
+- Interfaz web Thymeleaf con sesión.
+- Persistencia en SQL Server.
+- Registro, roles y seguridad.
 - Gestión de contenidos.
-- Evaluación inicial.
-- Recomendación y elección de nivel.
+- Evaluación inicial, recomendación y elección de nivel.
 - Corrección y retroalimentación.
-- Navegación al siguiente ejercicio.
-- Ejercicios de ordenar líneas y de encontrar el error.
+- Ejercicios de opciones, de ordenar líneas y de encontrar el error.
 - Ajustes de accesibilidad por usuario y racha opcional.
 - Intentos y progreso por lección.
 - Datos demo reproducibles.
-- Pruebas automatizadas y cobertura.
+- Pruebas unitarias con cobertura y pruebas de la API con pytest.
 
 ## Equipo
 
 ```text
 Equipo: vebes
+Integrantes: Bedacarratz Gonzalo, Bedacarratz Nicolas y Ventrici Gonzalo
 Asignatura: Programación III
 Institución: Escuela de Ciencia y Tecnología - UNSAM
 ```

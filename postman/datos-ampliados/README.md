@@ -1,6 +1,6 @@
 # Javali - Datos ampliados para Postman
 
-Esta carpeta contiene una carga independiente y reproducible para el perfil `demo` de Javali.
+Esta carpeta contiene una carga independiente para Javali (SQL Server o perfil `demo`).
 
 ## Contenido creado
 
@@ -28,13 +28,12 @@ Contraseña: vebes123
 2. Abrir la extensión Postman de VS Code.
 3. Importar esta carpeta con **Import → Folder**.
 4. Seleccionar el environment `Javali Datos Ampliados`.
-5. Ejecutar primero `00 - Verificar API`.
-6. Ejecutar `Run folder` sobre `Carga ampliada completa`.
-7. Abrir `http://localhost:8080/web/cursos`.
+5. Ejecutar `Run folder` sobre `Carga ampliada completa`. El paso `01 - Login (JWT)` guarda el token y los demas pedidos lo usan.
+6. Abrir `http://localhost:8080/web/cursos`.
 
 ## Importante
 
-- Ejecutar la carga una sola vez por inicio de H2.
-- Esta colección es independiente de `Javali Demo - Carga inicial`.
-- Para evitar duplicados, después de reiniciar Javali ejecutar una colección u otra, no ambas.
-- Al detener Javali se eliminan los datos porque H2 funciona en memoria.
+- Ejecutar la carga una sola vez por base de datos: con SQL Server los datos persisten y una segunda ejecucion duplica cursos, unidades y ejercicios.
+- Para empezar de cero, recrear la base `javali` y volver a iniciar la app.
+- Con el perfil `demo` (H2 en memoria) los datos se pierden al detener Javali.
+- La API usa JWT: el token vence (60 minutos por defecto). Si vence, volver a ejecutar `01 - Login (JWT)`.
