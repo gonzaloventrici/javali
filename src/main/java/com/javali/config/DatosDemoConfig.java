@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Configuration
-@Profile("demo")
+@Profile({"demo", "sqlserver"})
 public class DatosDemoConfig {
 
     @Bean
@@ -19,6 +19,11 @@ public class DatosDemoConfig {
             PasswordEncoder passwordEncoder) {
 
         return argumentos -> {
+
+            // Con SQL Server los datos persisten: no se vuelven a crear si ya existen.
+            if (usuarioRepository.findByEmail("vebes@javali.com").isPresent()) {
+                return;
+            }
 
             Usuario administrador = new Usuario();
             administrador.setNombre("Administrador Javali");

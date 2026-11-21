@@ -2,20 +2,15 @@
   "info": {
     "_postman_id": "28d178a4-e6e3-4418-aced-d577cc340789",
     "name": "Javali - Datos ampliados",
-    "description": "Carga independiente con 3 cursos, 6 unidades, 12 lecciones, 24 ejercicios y retroalimentaciones. Ejecutar una sola vez por inicio de H2.",
+    "description": "Carga independiente con 3 cursos, 6 unidades, 12 lecciones, 24 ejercicios y retroalimentaciones. Requiere iniciar sesion con el administrador (JWT). Ejecutar una sola vez por base de datos.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
-    "type": "basic",
-    "basic": [
+    "type": "bearer",
+    "bearer": [
       {
-        "key": "username",
-        "value": "{{adminEmail}}",
-        "type": "string"
-      },
-      {
-        "key": "password",
-        "value": "{{adminPassword}}",
+        "key": "token",
+        "value": "{{token}}",
         "type": "string"
       }
     ]
@@ -34,13 +29,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/cursos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos"]
             }
           },
           "response": [],
@@ -57,7 +47,7 @@
           ]
         },
         {
-          "name": "02 - Crear curso - Programación orientada a objetos con Java",
+          "name": "01 - Login (JWT)",
           "request": {
             "method": "POST",
             "header": [
@@ -68,29 +58,53 @@
               }
             ],
             "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
+              "type": "noauth"
             },
             "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{adminEmail}}\",\n  \"password\": \"{{adminPassword}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Login correcto\", function () { pm.response.to.have.status(200); });",
+                  "const data = pm.response.json();",
+                  "pm.environment.set(\"token\", data.token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Crear curso - Programación orientada a objetos con Java",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
               "raw": "{{baseUrl}}/api/cursos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos"]
             },
             "body": {
               "mode": "raw",
@@ -130,32 +144,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_pooId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_pooId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_pooId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -195,26 +187,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_fundamentos_pooId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -260,26 +235,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_clases_objetosId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -325,26 +283,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -386,26 +327,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -447,26 +371,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -508,26 +415,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_clases_objetosId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -573,26 +463,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -634,26 +507,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -695,26 +551,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_clases_objetos_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -756,26 +595,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_fundamentos_pooId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -821,26 +643,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_constructoresId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -886,26 +691,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -947,26 +735,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1008,26 +779,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1069,26 +823,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_constructoresId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -1134,26 +871,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1195,26 +915,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1256,26 +959,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_constructores_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1317,32 +1003,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_pooId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_pooId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_pooId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -1382,32 +1046,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_herenciaId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "unidades",
-                "{{unidad_herenciaId}}",
-                "lecciones"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "unidades", "{{unidad_herenciaId}}", "lecciones"]
             },
             "body": {
               "mode": "raw",
@@ -1447,26 +1089,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_herencia_javaId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -1512,26 +1137,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1573,26 +1181,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1634,26 +1225,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1695,26 +1269,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_herencia_javaId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -1760,26 +1317,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1821,26 +1361,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1882,26 +1405,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_herencia_java_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -1943,32 +1449,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_herenciaId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "unidades",
-                "{{unidad_herenciaId}}",
-                "lecciones"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "unidades", "{{unidad_herenciaId}}", "lecciones"]
             },
             "body": {
               "mode": "raw",
@@ -2008,26 +1492,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_polimorfismoId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -2073,26 +1540,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2134,26 +1584,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2195,26 +1628,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2256,26 +1672,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_polimorfismoId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -2321,26 +1720,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2382,26 +1764,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2443,26 +1808,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_polimorfismo_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2504,30 +1852,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos"]
             },
             "body": {
               "mode": "raw",
@@ -2567,32 +1895,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_coleccionesId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_coleccionesId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_coleccionesId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -2632,26 +1938,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_listas_setsId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -2697,32 +1986,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_listasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_listasId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_listasId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -2762,26 +2029,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2823,26 +2073,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2884,26 +2117,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -2945,32 +2161,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_listasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_listasId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_listasId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -3010,26 +2204,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3071,26 +2248,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3132,26 +2292,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_listas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3193,26 +2336,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_listas_setsId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -3258,32 +2384,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_setsId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_setsId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_setsId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -3323,26 +2427,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3384,26 +2471,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3445,26 +2515,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3506,32 +2559,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_setsId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_setsId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_setsId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -3571,26 +2602,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3632,26 +2646,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3693,26 +2690,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_sets_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -3754,32 +2734,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_coleccionesId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_coleccionesId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_coleccionesId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -3819,26 +2777,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_mapas_streamsId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -3884,32 +2825,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_mapasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_mapasId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_mapasId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -3949,26 +2868,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4010,26 +2912,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4071,26 +2956,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4132,32 +3000,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_mapasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "lecciones",
-                "{{leccion_mapasId}}",
-                "ejercicios"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "lecciones", "{{leccion_mapasId}}", "ejercicios"]
             },
             "body": {
               "mode": "raw",
@@ -4197,26 +3043,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4258,26 +3087,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4319,26 +3131,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_mapas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4380,26 +3175,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_mapas_streamsId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -4445,26 +3223,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_streamsId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -4510,26 +3271,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4571,26 +3315,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4632,26 +3359,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4693,26 +3403,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_streamsId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -4758,26 +3451,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4819,26 +3495,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4880,26 +3539,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_streams_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -4941,30 +3583,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos"]
             },
             "body": {
               "mode": "raw",
@@ -5004,32 +3626,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_excepcionesId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_excepcionesId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_excepcionesId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -5069,26 +3669,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_manejo_erroresId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -5134,26 +3717,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_try_catchId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -5199,26 +3765,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5260,26 +3809,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5321,26 +3853,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5382,26 +3897,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_try_catchId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -5447,26 +3945,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5508,26 +3989,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5569,26 +4033,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_try_catch_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5630,26 +4077,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_manejo_erroresId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "unidades",
@@ -5695,26 +4125,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_personalizadasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -5760,26 +4173,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5821,26 +4217,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5882,26 +4261,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -5943,26 +4305,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_personalizadasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -6008,26 +4353,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6069,26 +4397,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6130,26 +4441,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_personalizadas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6191,32 +4485,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/cursos/{{curso_excepcionesId}}/unidades",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos",
-                "{{curso_excepcionesId}}",
-                "unidades"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos", "{{curso_excepcionesId}}", "unidades"]
             },
             "body": {
               "mode": "raw",
@@ -6256,32 +4528,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_calidadId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "unidades",
-                "{{unidad_calidadId}}",
-                "lecciones"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "unidades", "{{unidad_calidadId}}", "lecciones"]
             },
             "body": {
               "mode": "raw",
@@ -6321,26 +4571,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_validacionId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -6386,26 +4619,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6447,26 +4663,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6508,26 +4707,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6569,26 +4751,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_validacionId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -6634,26 +4799,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6695,26 +4843,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6756,26 +4887,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_validacion_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -6817,32 +4931,10 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/unidades/{{unidad_calidadId}}/lecciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "unidades",
-                "{{unidad_calidadId}}",
-                "lecciones"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "unidades", "{{unidad_calidadId}}", "lecciones"]
             },
             "body": {
               "mode": "raw",
@@ -6882,26 +4974,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_pruebasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -6947,26 +5022,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7008,26 +5066,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7069,26 +5110,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_1Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7130,26 +5154,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/lecciones/{{leccion_pruebasId}}/ejercicios",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "lecciones",
@@ -7195,26 +5202,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7256,26 +5246,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7317,26 +5290,9 @@
                 "type": "text"
               }
             ],
-            "auth": {
-              "type": "basic",
-              "basic": [
-                {
-                  "key": "username",
-                  "value": "{{adminEmail}}",
-                  "type": "string"
-                },
-                {
-                  "key": "password",
-                  "value": "{{adminPassword}}",
-                  "type": "string"
-                }
-              ]
-            },
             "url": {
               "raw": "{{baseUrl}}/api/ejercicios/{{ejercicio_pruebas_2Id}}/retroalimentaciones",
-              "host": [
-                "{{baseUrl}}"
-              ],
+              "host": ["{{baseUrl}}"],
               "path": [
                 "api",
                 "ejercicios",
@@ -7377,13 +5333,8 @@
             },
             "url": {
               "raw": "{{baseUrl}}/api/cursos",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "api",
-                "cursos"
-              ]
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "cursos"]
             }
           },
           "response": [],

@@ -8,6 +8,18 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class ManejadorGlobalExcepciones {
 
+    @ExceptionHandler(CredencialesInvalidasException.class)
+    public ProblemDetail manejarCredencialesInvalidas(
+            CredencialesInvalidasException exception) {
+        ProblemDetail problema = ProblemDetail.forStatusAndDetail(
+                HttpStatus.UNAUTHORIZED,
+                exception.getMessage()
+        );
+        problema.setTitle("Credenciales inválidas");
+        return problema;
+    }
+    // Convierte credenciales incorrectas en una respuesta 401.
+
     @ExceptionHandler(UnidadNoEncontradaException.class)
     public ProblemDetail manejarUnidadNoEncontrada(
             UnidadNoEncontradaException exception) {
